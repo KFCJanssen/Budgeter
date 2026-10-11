@@ -410,6 +410,29 @@ namespace BudgetApp
             await Try("c-after-default", false, null, 1500);
             await Try("d-after-1ms", false, TimeSpan.FromMilliseconds(1), 600);
             await Try("e-before-zero", true, TimeSpan.Zero, 600);
+
+            // Our own pie-building code, standalone.
+            var summary = BudgetCalculator.Summarize(AppState.Store.Transactions, AppState.Store.Recurring, BudgetPeriod.ForMonth(DateTime.Today.AddMonths(-2)), DateTime.Today);
+            Line($"      pie slices: {string.Join(", ", summary.Slices.Select(x => $"{x.Label}={x.Amount}"))}");
+            async Task Ours(string name, bool labels, bool tooltip)
+            {
+                var pie = new LiveChartsCore.SkiaSharpView.WPF.PieChart { Width = 460, Height = 300, LegendPosition = LiveChartsCore.Measure.LegendPosition.Right };
+                var w = new Window { Content = pie, SizeToContent = SizeToContent.WidthAndHeight, Left = 0, Top = 0, ShowActivated = false, Background = Brushes.White };
+                w.Show();
+                await Idle(100);
+                Look.FillPie(pie, summary, labels, tooltip);
+                await Idle(800);
+                SaveVisual(pie, (int)pie.ActualWidth, (int)pie.ActualHeight, Brushes.White, Path.Combine(_out, "screens", $"diag-{name}.png"));
+                w.Close();
+            }
+            await Ours("f-ours", true, true);
+            await Ours("g-ours-nolabels", false, true);
+            await Ours("h-ours-notooltip", true, false);
+            await Ours("i-ours-bare", false, false);
+
+            var dash = (DashboardPage)((MainWindow)Application.Current.MainWindow).GetPage(PageKey.Dashboard);
+            var dp = (LiveChartsCore.SkiaSharpView.WPF.PieChart)dash.FindName("Pie");
+            Line($"      dashboard pie: {dp.ActualWidth}x{dp.ActualHeight}, loaded {dp.IsLoaded}, visible {dp.IsVisible}, series {dp.Series?.Count()}");
         }
 
         private static void SaveVisual(Visual root, int w, int h, Brush background, string file)

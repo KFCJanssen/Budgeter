@@ -62,7 +62,7 @@ namespace BudgetApp.Pages
         }
 
         /// <summary>Builds the "where the income goes" pie. Returns false when there's nothing to show.</summary>
-        public static bool FillPie(PieChart pie, BudgetSummary s)
+        public static bool FillPie(PieChart pie, BudgetSummary s, bool labels = true, bool tooltip = true)
         {
             Prepare(pie);
             decimal whole = s.SlicesAreShareOfIncome ? s.Income : s.TotalExpenses;
@@ -91,10 +91,10 @@ namespace BudgetApp.Pages
                 {
                     Values = new[] { slice.Amount },
                     Name = slice.Label,
-                    ToolTipLabelFormatter = _ => $"{Money.Format(slice.Amount)} ({Pct(share)})",
-                    DataLabelsPaint = new SolidColorPaint(SKColors.White),
+                    ToolTipLabelFormatter = tooltip ? _ => $"{Money.Format(slice.Amount)} ({Pct(share)})" : null,
+                    DataLabelsPaint = labels ? new SolidColorPaint(SKColors.White) : null,
                     DataLabelsSize = 12,
-                    DataLabelsFormatter = _ => share >= 0.06m ? Pct(share) : "",
+                    DataLabelsFormatter = labels ? _ => share >= 0.06m ? Pct(share) : "" : null,
                     Fill = new SolidColorPaint(color)
                 };
             }).ToArray<ISeries>();
