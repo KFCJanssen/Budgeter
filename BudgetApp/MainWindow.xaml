@@ -142,7 +142,7 @@
                 <ColumnDefinition Width="*"/>
             </Grid.ColumnDefinitions>
 
-            <!-- ---------- LEFT COLUMN: input forms ---------- -->
+            <!-- ========== LEFT COLUMN: input forms ========== -->
             <ScrollViewer Grid.Column="0" Margin="0,0,16,0" VerticalScrollBarVisibility="Auto">
                 <StackPanel>
 
@@ -205,7 +205,7 @@
                 </StackPanel>
             </ScrollViewer>
 
-            <!-- ---------- RIGHT COLUMN: chart + lists ---------- -->
+            <!-- ========== RIGHT COLUMN: chart + lists ========== -->
             <Grid Grid.Column="1">
                 <Grid.RowDefinitions>
                     <RowDefinition Height="320"/>
