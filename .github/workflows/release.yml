@@ -46,7 +46,7 @@ jobs:
         shell: bash
         run: |
           dotnet publish BudgetApp/BudgetApp.csproj -c Release -r win-x64 --self-contained true \
-            -p:PublishSingleFile=true -p:IncludeNativeLibrariesForSelfExtract=true -o publish
+            -p:PublishSingleFile=true -p:IncludeNativeLibrariesForSelfExtract=true -p:EnableCompressionInSingleFile=true -o publish
 
       - name: Screen size for screenshots
         if: ${{ !contains(github.workflow, 'Release') || steps.ver.outputs.exists == 'false' }}

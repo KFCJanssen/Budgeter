@@ -34,7 +34,7 @@ jobs:
         run: |
           set -o pipefail
           dotnet publish BudgetApp/BudgetApp.csproj -c Release -r win-x64 --self-contained true \
-            -p:PublishSingleFile=true -p:IncludeNativeLibrariesForSelfExtract=true -o publish -clp:NoSummary 2>&1 | tee build.log
+            -p:PublishSingleFile=true -p:IncludeNativeLibrariesForSelfExtract=true -p:EnableCompressionInSingleFile=true -o publish -clp:NoSummary 2>&1 | tee build.log
 
       - name: Screen size for screenshots
         if: ${{ !contains(github.workflow, 'Release') || steps.ver.outputs.exists == 'false' }}
@@ -63,7 +63,9 @@ jobs:
           cp selftest-out/*.png selftest-out/selftest.log selftest-out/*.pdf "$out/" 2>/dev/null || true
           grep -E "error|warning (CS|MC|NU)" build.log | sed 's/^.*\\BudgetApp\\//' | sort -u > "$out/build-errors.txt" 2>/dev/null || true
           cd "$out"
+          stat -c %s "$GITHUB_WORKSPACE/publish/BudgetApp.exe" > EXE_SIZE 2>/dev/null || true
           echo "$GITHUB_SHA $GITHUB_REF_NAME" > COMMIT
+          ls -l "$GITHUB_WORKSPACE/publish/BudgetApp.exe" | awk '{print $5}' > EXE_SIZE 2>/dev/null || true
           git init -q -b ci-screenshots
           git config user.name "ci"
           git config user.email "ci@users.noreply.github.com"
