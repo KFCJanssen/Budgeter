@@ -384,8 +384,54 @@ namespace BudgetApp
             await Idle(300);
         }
 
+        /// <summary>Isolated pie-chart experiments, to see which setup draws the slices.</summary>
+        private static async Task PieDiagnostics()
+        {
+            async Task Try(string name, bool setBeforeShow, TimeSpan? speed, int wait)
+            {
+                var pie = new LiveChartsCore.SkiaSharpView.WPF.PieChart { Width = 400, Height = 300, LegendPosition = LiveChartsCore.Measure.LegendPosition.Right };
+                if (speed is TimeSpan sp) pie.AnimationsSpeed = sp;
+                LiveChartsCore.ISeries[] series =
+                {
+                    new LiveChartsCore.SkiaSharpView.PieSeries<decimal> { Values = new[] { 300m }, Name = "A" },
+                    new LiveChartsCore.SkiaSharpView.PieSeries<decimal> { Values = new[] { 200m }, Name = "B" },
+                };
+                if (setBeforeShow) pie.Series = series;
+                var w = new Window { Content = pie, SizeToContent = SizeToContent.WidthAndHeight, Left = 0, Top = 0, ShowActivated = false, Background = Brushes.White };
+                w.Show();
+                if (!setBeforeShow) { await Idle(100); pie.Series = series; }
+                await Idle(wait);
+                SaveVisual(pie, (int)pie.ActualWidth, (int)pie.ActualHeight, Brushes.White, Path.Combine(_out, "screens", $"diag-{name}.png"));
+                w.Close();
+                Line($"ok    pie diagnostic {name}");
+            }
+            await Try("a-before-default", true, null, 1500);
+            await Try("b-before-1ms", true, TimeSpan.FromMilliseconds(1), 600);
+            await Try("c-after-default", false, null, 1500);
+            await Try("d-after-1ms", false, TimeSpan.FromMilliseconds(1), 600);
+            await Try("e-before-zero", true, TimeSpan.Zero, 600);
+        }
+
+        private static void SaveVisual(Visual root, int w, int h, Brush background, string file)
+        {
+            var visual = new DrawingVisual();
+            using (var ctx = visual.RenderOpen())
+            {
+                ctx.DrawRectangle(background, null, new Rect(0, 0, w, h));
+                ctx.DrawRectangle(new VisualBrush(root), null, new Rect(0, 0, w, h));
+            }
+            var bitmap = new RenderTargetBitmap(w, h, 96, 96, PixelFormats.Pbgra32);
+            bitmap.Render(visual);
+            var encoder = new PngBitmapEncoder();
+            encoder.Frames.Add(BitmapFrame.Create(bitmap));
+            Directory.CreateDirectory(Path.GetDirectoryName(file)!);
+            using var stream = File.Create(file);
+            encoder.Save(stream);
+        }
+
         private static async Task Screenshots()
         {
+            await PieDiagnostics();
             var window = (MainWindow)Application.Current.MainWindow;
             var store = AppState.Store;
             AppState.Period = BudgetPeriod.ForMonth(DateTime.Today.AddMonths(-2));
