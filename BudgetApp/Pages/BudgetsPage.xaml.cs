@@ -76,7 +76,7 @@ namespace BudgetApp.Pages
                 .ToList();
             BudgetList.ItemsSource = views;
             NoBudgets.Visibility = views.Count == 0 ? Visibility.Visible : Visibility.Collapsed;
-            BudgetsHeader.Text = $"Monthly budgets · {month.ToString("MMMM yyyy", CultureInfo.InvariantCulture)}";
+            BudgetsHeader.Text = $"Budgets in {month.ToString("MMMM", CultureInfo.InvariantCulture)}";
 
             var summary = BudgetCalculator.Summarize(store.Transactions, store.Recurring, Services.BudgetPeriod.ForMonth(month), DateTime.Today);
             decimal budgeted = store.Budgets.Sum(b => b.MonthlyLimit);

@@ -29,11 +29,12 @@
             <!-- Budgets -->
             <Border Style="{StaticResource CardStyle}" Margin="0,0,16,0">
                 <DockPanel>
-                    <Grid DockPanel.Dock="Top">
+                    <DockPanel DockPanel.Dock="Top">
+                        <Button DockPanel.Dock="Right" Content="Suggest from my spending" Style="{StaticResource QuietButton}" VerticalAlignment="Top"
+                                Margin="8,0,0,8" Click="Suggest_Click"
+                                ToolTip="Fills in a budget for each category you spend on, based on the average of your last 3 months."/>
                         <TextBlock x:Name="BudgetsHeader" Text="Monthly budgets" Style="{StaticResource SectionHeader}"/>
-                        <Button Content="Suggest from my spending" Style="{StaticResource QuietButton}" HorizontalAlignment="Right" VerticalAlignment="Top"
-                                Click="Suggest_Click" ToolTip="Fills in a budget for each category you spend on, based on the average of your last 3 months."/>
-                    </Grid>
+                    </DockPanel>
                     <TextBlock DockPanel.Dock="Top" x:Name="BudgetSummary" Style="{StaticResource HintText}" Margin="0,-4,0,12"/>
 
                     <!-- Add / edit -->

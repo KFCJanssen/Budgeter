@@ -137,11 +137,12 @@
                 </Border>
                 <Border Grid.Row="1" Style="{StaticResource CardStyle}" Margin="0">
                     <DockPanel>
-                        <Grid DockPanel.Dock="Top">
-                            <TextBlock x:Name="BudgetsHeader" Text="Budgets this month" Style="{StaticResource SectionHeader}"/>
-                            <Button Content="Manage" Style="{StaticResource LinkButton}" HorizontalAlignment="Right" VerticalAlignment="Top"
+                        <DockPanel DockPanel.Dock="Top">
+                            <Button DockPanel.Dock="Right" Content="Manage" Style="{StaticResource LinkButton}" VerticalAlignment="Top" Margin="8,3,0,0"
                                     Click="ManageBudgets_Click"/>
-                        </Grid>
+                            <TextBlock x:Name="BudgetsHeader" Text="Budgets this month" Style="{StaticResource SectionHeader}" TextWrapping="NoWrap"
+                                       TextTrimming="CharacterEllipsis"/>
+                        </DockPanel>
                         <Grid>
                             <ScrollViewer VerticalScrollBarVisibility="Auto">
                                 <ItemsControl x:Name="BudgetList">
@@ -168,11 +169,11 @@
             <!-- Right: recent transactions -->
             <Border Grid.Column="2" Style="{StaticResource CardStyle}" Margin="0">
                 <DockPanel>
-                    <Grid DockPanel.Dock="Top">
-                        <TextBlock Text="Latest entries" Style="{StaticResource SectionHeader}"/>
-                        <Button Content="All transactions" Style="{StaticResource LinkButton}" HorizontalAlignment="Right" VerticalAlignment="Top"
+                    <DockPanel DockPanel.Dock="Top">
+                        <Button DockPanel.Dock="Right" Content="See all" Style="{StaticResource LinkButton}" VerticalAlignment="Top" Margin="8,3,0,0"
                                 Click="AllTransactions_Click"/>
-                    </Grid>
+                        <TextBlock Text="Latest entries" Style="{StaticResource SectionHeader}" TextWrapping="NoWrap" TextTrimming="CharacterEllipsis"/>
+                    </DockPanel>
                     <Grid>
                         <DataGrid x:Name="RecentGrid" HeadersVisibility="None" GridLinesVisibility="Horizontal" RowHeight="40"
                                   MouseDoubleClick="RecentGrid_MouseDoubleClick">

@@ -44,29 +44,29 @@
         <Grid Grid.Row="2">
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="*"/>
-                <ColumnDefinition Width="330"/>
+                <ColumnDefinition Width="310"/>
             </Grid.ColumnDefinitions>
 
             <Border Style="{StaticResource CardStyle}" Margin="0,0,16,0">
                 <DockPanel>
-                    <StackPanel DockPanel.Dock="Bottom" Orientation="Horizontal" Margin="0,10,0,0">
+                    <DockPanel DockPanel.Dock="Bottom" Margin="0,10,0,0">
                         <Button Content="Edit" Style="{StaticResource QuietButton}" Width="70" Click="Edit_Click"/>
                         <Button x:Name="ToggleButton" Content="Pause" Style="{StaticResource QuietButton}" Width="90" Margin="8,0,0,0" Click="Toggle_Click"/>
                         <Button Content="Remove" Style="{StaticResource DangerButton}" Width="90" Margin="8,0,0,0" Click="Remove_Click"/>
-                        <TextBlock Style="{StaticResource HintText}" VerticalAlignment="Center" Margin="14,0,0,0" MaxWidth="420"
+                        <TextBlock Style="{StaticResource HintText}" VerticalAlignment="Center" Margin="14,0,0,0"
                                    Text="Pause something you cancelled: it stops counting from now on but stays in past months."/>
-                    </StackPanel>
+                    </DockPanel>
                     <Grid>
                         <DataGrid x:Name="ItemsGrid" SelectionChanged="ItemsGrid_SelectionChanged" MouseDoubleClick="ItemsGrid_MouseDoubleClick"
                                   KeyDown="ItemsGrid_KeyDown">
                             <DataGrid.Columns>
-                                <DataGridTextColumn Header="Name" Binding="{Binding Name}" Width="*" ElementStyle="{StaticResource Ellipsis}"/>
-                                <DataGridTextColumn Header="Type" Binding="{Binding TypeText}" Width="70"/>
-                                <DataGridTextColumn Header="Category" Binding="{Binding Category}" Width="*" ElementStyle="{StaticResource Ellipsis}"/>
-                                <DataGridTextColumn Header="Amount" Binding="{Binding AmountText}" Width="130" ElementStyle="{StaticResource RightAligned}"/>
-                                <DataGridTextColumn Header="Per month" Binding="{Binding MonthlyText}" Width="100" ElementStyle="{StaticResource RightAligned}"/>
-                                <DataGridTextColumn Header="Since" Binding="{Binding Since}" Width="90"/>
-                                <DataGridTextColumn Header="Status" Binding="{Binding StatusText}" Width="70"/>
+                                <DataGridTextColumn Header="Name" Binding="{Binding Name}" Width="*" MinWidth="110" ElementStyle="{StaticResource Ellipsis}"/>
+                                <DataGridTextColumn Header="Type" Binding="{Binding TypeText}" Width="62"/>
+                                <DataGridTextColumn Header="Category" Binding="{Binding Category}" Width="0.8*" MinWidth="90" ElementStyle="{StaticResource Ellipsis}"/>
+                                <DataGridTextColumn Header="Amount" Binding="{Binding AmountText}" Width="120" ElementStyle="{StaticResource RightAligned}"/>
+                                <DataGridTextColumn Header="Per month" Binding="{Binding MonthlyText}" Width="90" ElementStyle="{StaticResource RightAligned}"/>
+                                <DataGridTextColumn Header="Since" Binding="{Binding Since}" Width="72"/>
+                                <DataGridTextColumn Header="Status" Binding="{Binding StatusText}" Width="58"/>
                             </DataGrid.Columns>
                         </DataGrid>
                         <TextBlock x:Name="EmptyText" Style="{StaticResource HintText}" HorizontalAlignment="Center" VerticalAlignment="Center"

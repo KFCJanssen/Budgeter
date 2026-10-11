@@ -35,6 +35,12 @@ jobs:
           set -o pipefail
           dotnet build BudgetApp/BudgetApp.csproj -c Release -clp:NoSummary 2>&1 | tee build.log
 
+      - name: Screen size for screenshots
+        if: ${{ !contains(github.workflow, 'Release') || steps.ver.outputs.exists == 'false' }}
+        continue-on-error: true
+        shell: pwsh
+        run: Set-DisplayResolution -Width 1920 -Height 1080 -Force
+
       - name: Self-test (upgrade, imports, PDF, screenshots)
         timeout-minutes: 10
         shell: pwsh

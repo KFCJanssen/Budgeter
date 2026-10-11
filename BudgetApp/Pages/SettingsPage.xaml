@@ -39,8 +39,9 @@
                                 <Button x:Name="InstallButton" Content="Install update" Style="{StaticResource PrimaryButton}" Margin="0,0,8,8" Click="Install_Click" Visibility="Collapsed"/>
                                 <Button Content="Open download page" Style="{StaticResource QuietButton}" Margin="0,0,8,8" Click="DownloadPage_Click"/>
                             </WrapPanel>
-                            <CheckBox x:Name="AutoCheck" Content="Check for updates automatically (once a day, when Budgeter starts)"
-                                      Margin="0,6,0,0" Checked="AutoCheck_Changed" Unchecked="AutoCheck_Changed"/>
+                            <CheckBox x:Name="AutoCheck" Margin="0,6,0,0" Checked="AutoCheck_Changed" Unchecked="AutoCheck_Changed">
+                                <TextBlock Text="Check for updates automatically (once a day, when Budgeter starts)" TextWrapping="Wrap"/>
+                            </CheckBox>
                         </StackPanel>
                     </Border>
 
@@ -48,8 +49,9 @@
                     <Border Style="{StaticResource CardStyle}">
                         <StackPanel>
                             <TextBlock Text="Bank imports" Style="{StaticResource SectionHeader}"/>
-                            <CheckBox x:Name="BuiltInRules" Content="Recognise well-known Dutch shops and companies automatically"
-                                      Checked="BuiltInRules_Changed" Unchecked="BuiltInRules_Changed"/>
+                            <CheckBox x:Name="BuiltInRules" Checked="BuiltInRules_Changed" Unchecked="BuiltInRules_Changed">
+                                <TextBlock Text="Recognise well-known Dutch shops and companies automatically" TextWrapping="Wrap"/>
+                            </CheckBox>
                             <TextBlock Style="{StaticResource HintText}" Margin="22,2,0,14"
                                        Text="E.g. Albert Heijn → Groceries, NS → Transport, Ziggo → Utilities. Your own rules always come first."/>
                             <TextBlock Text="Your own account numbers (IBANs)" Style="{StaticResource InputLabel}"/>

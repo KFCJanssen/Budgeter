@@ -211,7 +211,7 @@ namespace BudgetApp
             // The 1.0 Netflix item stays; add the rest.
             foreach (var r in new[]
             {
-                new RecurringItem { Name = "Bijbaan Jumbo", Category = "Salary", Amount = 780m, Type = TransactionType.Income, StartDate = first },
+                new RecurringItem { Name = "Bijbaan Jumbo", Category = "Salary", Amount = 960m, Type = TransactionType.Income, StartDate = first },
                 new RecurringItem { Name = "DUO", Category = "Student finance", Amount = 420m, Type = TransactionType.Income, StartDate = first },
                 new RecurringItem { Name = "Huur", Category = "Housing", Amount = 545m, StartDate = first },
                 new RecurringItem { Name = "Zilveren Kruis", Category = "Insurance", Amount = 152.50m, StartDate = first },
@@ -225,11 +225,11 @@ namespace BudgetApp
 
             var shops = new (string Category, string[] Payees, decimal Min, decimal Max, int PerMonth)[]
             {
-                ("Groceries", new[] { "Albert Heijn 1403", "Jumbo Maastricht", "Lidl Wyck", "Aldi" }, 6, 55, 9),
-                ("Eating out", new[] { "Thuisbezorgd.nl", "Cafe Zondag", "Burger King", "Starbucks" }, 4, 32, 4),
+                ("Groceries", new[] { "Albert Heijn 1403", "Jumbo Maastricht", "Lidl Wyck", "Aldi" }, 6, 42, 7),
+                ("Eating out", new[] { "Thuisbezorgd.nl", "Cafe Zondag", "Burger King", "Starbucks" }, 4, 26, 3),
                 ("Transport", new[] { "NS Groep", "Arriva", "OV-chipkaart" }, 3, 28, 4),
-                ("Shopping", new[] { "Bol.com", "Hema", "Action", "Coolblue" }, 5, 90, 2),
-                ("Going out", new[] { "Cafe de Pieter", "Pathe", "Muziekgieterij" }, 8, 45, 3),
+                ("Shopping", new[] { "Bol.com", "Hema", "Action", "Coolblue" }, 5, 60, 2),
+                ("Going out", new[] { "Cafe de Pieter", "Pathe", "Muziekgieterij" }, 8, 35, 2),
                 ("Education", new[] { "Studystore", "Universiteit Maastricht" }, 15, 70, 0),
             };
 
@@ -378,7 +378,7 @@ namespace BudgetApp
 
         private static async Task ShowWindowAsync()
         {
-            var window = new MainWindow { Width = 1400, Height = 860, WindowStartupLocation = WindowStartupLocation.Manual, Left = 0, Top = 0, ShowActivated = false };
+            var window = new MainWindow { Width = 1280, Height = 800, WindowStartupLocation = WindowStartupLocation.Manual, Left = 0, Top = 0, ShowActivated = false };
             Application.Current.MainWindow = window;
             window.Show();
             await Idle(300);
@@ -388,11 +388,11 @@ namespace BudgetApp
         {
             var window = (MainWindow)Application.Current.MainWindow;
             var store = AppState.Store;
-            AppState.Period = BudgetPeriod.ForMonth(DateTime.Today.AddMonths(-1));
+            AppState.Period = BudgetPeriod.ForMonth(DateTime.Today.AddMonths(-2));
 
             await Shot("01-dashboard", PageKey.Dashboard);
             await Shot("02-transactions", PageKey.Transactions);
-            var someTx = store.Transactions.Where(t => t.Payee != null && t.Date.Month == DateTime.Today.AddMonths(-1).Month).OrderByDescending(t => t.Date).First();
+            var someTx = store.Transactions.Where(t => t.Payee != null && t.Date.Month == DateTime.Today.AddMonths(-2).Month).OrderByDescending(t => t.Date).First();
             await Shot("03-transactions-edit", PageKey.Transactions, someTx);
             await Shot("04-programmed", PageKey.Programmed);
             await Shot("05-budgets", PageKey.Budgets);

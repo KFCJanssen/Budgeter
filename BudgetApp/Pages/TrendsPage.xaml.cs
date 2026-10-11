@@ -68,7 +68,7 @@ namespace BudgetApp.Pages
                 AvgRate.Foreground = inc - exp >= 0 ? Look.Accent : Look.Bad;
                 AvgSaved.Text = $"{Money.Format(Math.Round(inc - exp, 2))} left over a month";
                 var best = complete.OrderByDescending(m => m.Net).First();
-                BestMonth.Text = best.Month.ToString("MMMM", CultureInfo.InvariantCulture);
+                BestMonth.Text = best.Month.ToString("MMM yyyy", CultureInfo.InvariantCulture);
                 BestNote.Text = $"{Money.Format(best.Net)} left over";
                 if (complete.Count >= 6)
                 {

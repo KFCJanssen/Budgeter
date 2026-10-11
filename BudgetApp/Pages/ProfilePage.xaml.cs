@@ -148,7 +148,7 @@ namespace BudgetApp.Pages
                 var sp = new StackPanel();
                 sp.Children.Add(new TextBlock { Text = label, Style = (Style)FindResource("StatLabel") });
                 sp.Children.Add(new TextBlock { Text = value, FontSize = 18, FontWeight = FontWeights.Bold, Foreground = brush ?? Look.Text });
-                KpiPanel.Children.Add(new Border { Background = Look.Res("PageBrush"), CornerRadius = new CornerRadius(10), Padding = new Thickness(12, 8, 12, 8), Margin = new Thickness(0, 0, 10, 10), MinWidth = 140, Child = sp });
+                KpiPanel.Children.Add(new Border { Background = Look.Res("PageBrush"), CornerRadius = new CornerRadius(10), Padding = new Thickness(12, 8, 12, 8), Margin = new Thickness(0, 0, 10, 10), Child = sp });
             }
             Kpi("AVG INCOME", Money.Format(snap.AvgIncome));
             Kpi("AVG SPENDING", Money.Format(snap.AvgExpenses));

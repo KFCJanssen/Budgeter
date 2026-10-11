@@ -25,64 +25,64 @@
         <Grid Grid.Row="1">
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="*"/>
-                <ColumnDefinition Width="330"/>
+                <ColumnDefinition Width="310"/>
             </Grid.ColumnDefinitions>
 
             <!-- List -->
             <Border Style="{StaticResource CardStyle}" Margin="0,0,16,0">
                 <DockPanel>
                     <!-- Filters -->
-                    <Grid DockPanel.Dock="Top" Margin="0,0,0,8">
-                        <Grid.ColumnDefinitions>
-                            <ColumnDefinition Width="*"/>
-                            <ColumnDefinition Width="170"/>
-                            <ColumnDefinition Width="130"/>
-                            <ColumnDefinition Width="Auto"/>
-                        </Grid.ColumnDefinitions>
+                    <StackPanel DockPanel.Dock="Top" Margin="0,0,0,8">
                         <Grid>
-                            <TextBox x:Name="SearchBox" TextChanged="Filter_Changed" Margin="0,0,8,0" Padding="30,7,8,7"/>
+                            <TextBox x:Name="SearchBox" TextChanged="Filter_Changed" Padding="30,7,8,7" Margin="0,0,0,8"/>
                             <TextBlock Text="&#xE721;" FontFamily="{StaticResource IconFont}" Foreground="{StaticResource FaintBrush}"
                                        VerticalAlignment="Top" Margin="10,10,0,0" IsHitTestVisible="False"/>
                             <TextBlock x:Name="SearchHint" Text="Search payee, description, category or amount" Foreground="{StaticResource FaintBrush}"
                                        VerticalAlignment="Top" Margin="31,8,0,0" IsHitTestVisible="False"/>
                         </Grid>
-                        <ComboBox Grid.Column="1" x:Name="CategoryFilter" SelectionChanged="Filter_Changed" Margin="0,0,8,0"/>
-                        <ComboBox Grid.Column="2" x:Name="TypeFilter" SelectionChanged="Filter_Changed" Margin="0,0,8,0" SelectedIndex="0">
-                            <ComboBoxItem Content="All types"/>
-                            <ComboBoxItem Content="Income"/>
-                            <ComboBoxItem Content="Expenses"/>
-                            <ComboBoxItem Content="Transfers"/>
-                        </ComboBox>
-                        <CheckBox Grid.Column="3" x:Name="UncategorizedOnly" Content="No category only" VerticalAlignment="Top" Margin="0,8,0,0"
-                                  Checked="Filter_Changed" Unchecked="Filter_Changed"/>
-                    </Grid>
+                        <Grid>
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="*" MaxWidth="220"/>
+                                <ColumnDefinition Width="*" MaxWidth="160"/>
+                                <ColumnDefinition Width="Auto"/>
+                                <ColumnDefinition Width="*"/>
+                            </Grid.ColumnDefinitions>
+                            <ComboBox x:Name="CategoryFilter" SelectionChanged="Filter_Changed" Margin="0,0,8,0"/>
+                            <ComboBox Grid.Column="1" x:Name="TypeFilter" SelectionChanged="Filter_Changed" Margin="0,0,12,0" SelectedIndex="0">
+                                <ComboBoxItem Content="All types"/>
+                                <ComboBoxItem Content="Income"/>
+                                <ComboBoxItem Content="Expenses"/>
+                                <ComboBoxItem Content="Transfers"/>
+                            </ComboBox>
+                            <CheckBox Grid.Column="2" x:Name="UncategorizedOnly" Content="No category only" VerticalAlignment="Top" Margin="0,8,0,0"
+                                      Checked="Filter_Changed" Unchecked="Filter_Changed"/>
+                        </Grid>
+                    </StackPanel>
 
                     <!-- Bottom bar -->
-                    <Grid DockPanel.Dock="Bottom" Margin="0,10,0,0">
-                        <Grid.ColumnDefinitions>
-                            <ColumnDefinition Width="*"/>
-                            <ColumnDefinition Width="Auto"/>
-                        </Grid.ColumnDefinitions>
-                        <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
-                            <Button Content="Edit" Style="{StaticResource QuietButton}" Width="70" Click="Edit_Click"/>
-                            <Button Content="Delete" Style="{StaticResource DangerButton}" Width="80" Margin="8,0,0,0" Click="Delete_Click"/>
-                            <TextBlock Text="Selected → category:" Foreground="{StaticResource MutedBrush}" VerticalAlignment="Center" Margin="16,0,8,0"/>
-                            <ComboBox x:Name="BulkCategory" IsEditable="True" Width="150" Margin="0"/>
-                            <Button Content="Apply" Style="{StaticResource QuietButton}" Margin="8,0,0,0" Click="BulkApply_Click"/>
-                        </StackPanel>
-                        <TextBlock Grid.Column="1" x:Name="TotalsText" Style="{StaticResource HintText}" VerticalAlignment="Center" TextAlignment="Right"/>
-                    </Grid>
+                    <StackPanel DockPanel.Dock="Bottom" Margin="0,8,0,0">
+                        <TextBlock x:Name="TotalsText" Style="{StaticResource HintText}" Margin="0,0,0,8"/>
+                        <WrapPanel>
+                            <Button Content="Edit" Style="{StaticResource QuietButton}" Width="70" Margin="0,0,8,6" Click="Edit_Click"/>
+                            <Button Content="Delete" Style="{StaticResource DangerButton}" Width="80" Margin="0,0,20,6" Click="Delete_Click"/>
+                            <StackPanel Orientation="Horizontal" Margin="0,0,0,6">
+                                <TextBlock Text="Selected rows → category" Foreground="{StaticResource MutedBrush}" VerticalAlignment="Center" Margin="0,0,8,0"/>
+                                <ComboBox x:Name="BulkCategory" IsEditable="True" Width="150" Margin="0"/>
+                                <Button Content="Apply" Style="{StaticResource QuietButton}" Margin="8,0,0,0" Click="BulkApply_Click"/>
+                            </StackPanel>
+                        </WrapPanel>
+                    </StackPanel>
 
                     <Grid>
                         <DataGrid x:Name="TxGrid" SelectionMode="Extended" MouseDoubleClick="Grid_MouseDoubleClick" KeyDown="Grid_KeyDown"
                                   SelectionChanged="Grid_SelectionChanged">
                             <DataGrid.Columns>
-                                <DataGridTextColumn Header="Date" Binding="{Binding Date, StringFormat=dd-MM-yyyy}" Width="90"/>
-                                <DataGridTextColumn Header="Category" Binding="{Binding Category}" Width="130" ElementStyle="{StaticResource Ellipsis}"/>
-                                <DataGridTextColumn Header="Payee" Binding="{Binding Payee}" Width="*" ElementStyle="{StaticResource Ellipsis}"/>
-                                <DataGridTextColumn Header="Description" Binding="{Binding Description}" Width="1.3*" ElementStyle="{StaticResource MutedCell}"/>
-                                <DataGridTextColumn Header="Note" Binding="{Binding Converter={StaticResource TxNote}}" Width="88" ElementStyle="{StaticResource MutedCell}" CanUserSort="False"/>
-                                <DataGridTextColumn Header="Amount" Binding="{Binding Converter={StaticResource TxAmount}}" Width="105"
+                                <DataGridTextColumn Header="Date" Binding="{Binding Date, StringFormat=dd-MM-yyyy}" Width="84"/>
+                                <DataGridTextColumn Header="Category" Binding="{Binding Category}" Width="0.8*" MinWidth="90" ElementStyle="{StaticResource Ellipsis}"/>
+                                <DataGridTextColumn Header="Payee" Binding="{Binding Payee}" Width="*" MinWidth="100" ElementStyle="{StaticResource Ellipsis}"/>
+                                <DataGridTextColumn Header="Description" Binding="{Binding Description}" Width="1.2*" MinWidth="80" ElementStyle="{StaticResource MutedCell}"/>
+                                <DataGridTextColumn Header="Note" Binding="{Binding Converter={StaticResource TxNote}}" Width="78" ElementStyle="{StaticResource MutedCell}" CanUserSort="False"/>
+                                <DataGridTextColumn Header="Amount" Binding="{Binding Converter={StaticResource TxAmount}}" Width="100"
                                                     ElementStyle="{StaticResource AmountCell}" SortMemberPath="Amount"/>
                             </DataGrid.Columns>
                         </DataGrid>

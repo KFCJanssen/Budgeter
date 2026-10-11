@@ -202,11 +202,7 @@ namespace BudgetApp.Services
                     {
                         cd.RelativeColumn(1.1f); cd.RelativeColumn(); cd.RelativeColumn(); cd.RelativeColumn(); cd.ConstantColumn(45); cd.RelativeColumn(2.2f);
                     });
-                    table.Header(h =>
-                    {
-                        foreach (var t in new[] { "Month", "Income", "Spending", "Left over", "Kept", "" })
-                            h.Cell().Element(HeaderCell).Text(t);
-                    });
+                    table.Header(h => Headers(h, "Month", ">Income", ">Spending", ">Left over", ">Kept", ""));
                     foreach (var m in s.Months)
                     {
                         table.Cell().Element(Cell).Text(m.Label);
@@ -243,11 +239,7 @@ namespace BudgetApp.Services
                 c.Item().Table(table =>
                 {
                     table.ColumnsDefinition(cd => { cd.RelativeColumn(1.6f); cd.RelativeColumn(); cd.ConstantColumn(55); cd.ConstantColumn(55); cd.RelativeColumn(); cd.RelativeColumn(1.6f); });
-                    table.Header(h =>
-                    {
-                        foreach (var t in new[] { "Category", "Per month", "Of income", "Type", "Budget", "" })
-                            h.Cell().Element(HeaderCell).Text(t);
-                    });
+                    table.Header(h => Headers(h, "Category", ">Per month", ">Of income", "Type", ">Budget", ""));
                     foreach (var cat in cats)
                     {
                         bool over = cat.Budget is decimal b && cat.PerMonth > b;
@@ -272,10 +264,7 @@ namespace BudgetApp.Services
                 c.Item().Table(table =>
                 {
                     table.ColumnsDefinition(cd => { cd.RelativeColumn(2); cd.RelativeColumn(1.5f); cd.RelativeColumn(); cd.RelativeColumn(); });
-                    table.Header(h =>
-                    {
-                        foreach (var t in new[] { "Name", "Category", "Amount", "Per month" }) h.Cell().Element(HeaderCell).Text(t);
-                    });
+                    table.Header(h => Headers(h, "Name", "Category", ">Amount", ">Per month"));
                     foreach (var r in active)
                     {
                         var every = r.Frequency switch { RecurringFrequency.Weekly => "week", RecurringFrequency.Yearly => "year", _ => "month" };
@@ -296,10 +285,7 @@ namespace BudgetApp.Services
                 c.Item().Table(table =>
                 {
                     table.ColumnsDefinition(cd => { cd.RelativeColumn(2); cd.RelativeColumn(1.5f); cd.RelativeColumn(); cd.ConstantColumn(55); cd.RelativeColumn(); });
-                    table.Header(h =>
-                    {
-                        foreach (var t in new[] { "Name", "Kind", "Balance", "Interest", "Pay / month" }) h.Cell().Element(HeaderCell).Text(t);
-                    });
+                    table.Header(h => Headers(h, "Name", "Kind", ">Balance", ">Interest", ">Pay / month"));
                     foreach (var b in s.Assets.Concat(s.Debts))
                     {
                         table.Cell().Element(Cell).Text(b.Name);
@@ -339,6 +325,17 @@ namespace BudgetApp.Services
         }
 
         // ------------------------------------------------------------------ building blocks
+
+        /// <summary>Column titles; a leading '>' right-aligns the title (for number columns).</summary>
+        private static void Headers(TableCellDescriptor h, params string[] titles)
+        {
+            foreach (var t in titles)
+            {
+                bool right = t.StartsWith('>');
+                var cell = h.Cell().Element(HeaderCell);
+                (right ? cell.AlignRight() : cell).Text(right ? t[1..] : t);
+            }
+        }
 
         private static IContainer HeaderCell(IContainer c) =>
             c.BorderBottom(1).BorderColor(Line).PaddingBottom(4).DefaultTextStyle(t => t.FontSize(7.5f).FontColor(Muted).SemiBold());

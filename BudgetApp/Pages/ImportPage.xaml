@@ -306,8 +306,8 @@
                                     </Style>
                                 </DataGridTextColumn.ElementStyle>
                             </DataGridTextColumn>
-                            <DataGridTextColumn Header="Payee" Binding="{Binding Payee}" Width="*" ElementStyle="{StaticResource Ellipsis}"/>
-                            <DataGridTemplateColumn Header="Type" Width="100" SortMemberPath="Type">
+                            <DataGridTextColumn Header="Payee" Binding="{Binding Payee}" Width="*" MinWidth="120" ElementStyle="{StaticResource Ellipsis}"/>
+                            <DataGridTemplateColumn Header="Type" Width="92" SortMemberPath="Type">
                                 <DataGridTemplateColumn.CellTemplate>
                                     <DataTemplate>
                                         <ComboBox Margin="0" Padding="6,2" ItemsSource="{Binding TypeChoices, RelativeSource={RelativeSource AncestorType={x:Type UserControl}}}" DisplayMemberPath="Label"
@@ -315,7 +315,7 @@
                                     </DataTemplate>
                                 </DataGridTemplateColumn.CellTemplate>
                             </DataGridTemplateColumn>
-                            <DataGridTemplateColumn Header="Category" Width="160" SortMemberPath="Category">
+                            <DataGridTemplateColumn Header="Category" Width="150" SortMemberPath="Category">
                                 <DataGridTemplateColumn.CellTemplate>
                                     <DataTemplate>
                                         <ComboBox Margin="0" Padding="6,2" IsEditable="True" ItemsSource="{Binding Categories, RelativeSource={RelativeSource AncestorType={x:Type UserControl}}}"
@@ -323,7 +323,7 @@
                                     </DataTemplate>
                                 </DataGridTemplateColumn.CellTemplate>
                             </DataGridTemplateColumn>
-                            <DataGridTemplateColumn Header="Programmed" Width="130">
+                            <DataGridTemplateColumn Header="Programmed" Width="120">
                                 <DataGridTemplateColumn.CellTemplate>
                                     <DataTemplate>
                                         <ComboBox Margin="0" Padding="6,2" ItemsSource="{Binding RecurringChoices, RelativeSource={RelativeSource AncestorType={x:Type UserControl}}}" DisplayMemberPath="Label"
@@ -331,7 +331,7 @@
                                     </DataTemplate>
                                 </DataGridTemplateColumn.CellTemplate>
                             </DataGridTemplateColumn>
-                            <DataGridTemplateColumn Header="Why / status" Width="1.2*" SortMemberPath="Status">
+                            <DataGridTemplateColumn Header="Why / status" Width="1.1*" MinWidth="110" SortMemberPath="Status">
                                 <DataGridTemplateColumn.CellTemplate>
                                     <DataTemplate>
                                         <TextBlock Text="{Binding Why}" TextTrimming="CharacterEllipsis" VerticalAlignment="Center"

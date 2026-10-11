@@ -52,7 +52,13 @@ namespace BudgetApp.Pages
 
         public static void Prepare(IChartView chart)
         {
-            if (AppState.NoAnimations) chart.AnimationsSpeed = TimeSpan.Zero;
+            // The self-test takes screenshots: draw (almost) instantly. A zero duration makes pie slices
+            // never appear, so use 1 ms. Hide tooltips there too (the mouse may hover over a chart).
+            if (AppState.NoAnimations)
+            {
+                chart.AnimationsSpeed = TimeSpan.FromMilliseconds(1);
+                chart.TooltipPosition = LiveChartsCore.Measure.TooltipPosition.Hidden;
+            }
         }
 
         /// <summary>Builds the "where the income goes" pie. Returns false when there's nothing to show.</summary>

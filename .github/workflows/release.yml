@@ -41,6 +41,12 @@ jobs:
         shell: bash
         run: dotnet run --project BudgetApp.Tests -c Release
 
+      - name: Screen size for screenshots
+        if: ${{ !contains(github.workflow, 'Release') || steps.ver.outputs.exists == 'false' }}
+        continue-on-error: true
+        shell: pwsh
+        run: Set-DisplayResolution -Width 1920 -Height 1080 -Force
+
       - name: Self-test (upgrade, imports, PDF, screenshots)
         if: steps.ver.outputs.exists == 'false'
         timeout-minutes: 10

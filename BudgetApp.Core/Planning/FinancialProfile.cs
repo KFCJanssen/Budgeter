@@ -263,7 +263,7 @@ namespace BudgetApp.Planning
                 else if (em < 3)
                     list.Add(new Advice(AdviceLevel.Attention, "Buffer", $"Your buffer covers {em:0.0} months",
                         $"Liquid savings {Eur(s.LiquidSavings)} vs. about {Eur(s.EssentialsPerMonth)} of essential costs a month.",
-                        $"The common guideline is 3-6 months: about {Eur(s.EssentialsPerMonth * 3)}-{Eur(s.EssentialsPerMonth * 6)}. Consider a savings goal for the difference."));
+                        $"The common guideline is 3-6 months: between {Eur(s.EssentialsPerMonth * 3)} and {Eur(s.EssentialsPerMonth * 6)}. Consider a savings goal for the difference."));
                 else if (em <= 12)
                     list.Add(new Advice(AdviceLevel.Good, "Buffer", $"Your buffer covers {em:0.0} months",
                         $"Liquid savings {Eur(s.LiquidSavings)} vs. about {Eur(s.EssentialsPerMonth)} of essential costs a month.",
@@ -339,7 +339,8 @@ namespace BudgetApp.Planning
                 bool onTrack = s.AvgNet >= req;
                 list.Add(new Advice(onTrack ? AdviceLevel.Good : AdviceLevel.Attention, "Goals",
                     onTrack ? $"\"{g.Goal.Name}\" looks reachable" : $"\"{g.Goal.Name}\" needs more per month",
-                    $"{Eur(g.Remaining)} to go in {g.MonthsLeft} months: {Eur(req)} a month. You have about {Eur(Math.Max(0, s.AvgNet))} a month left over.",
+                    $"{Eur(g.Remaining)} to go in {g.MonthsLeft} months: {Eur(req)} a month. " +
+                    (s.AvgNet > 0 ? $"You have about {Eur(s.AvgNet)} a month left over." : "Right now you spend more than you earn, so nothing is left over for it yet."),
                     onTrack ? "Set up an automatic transfer on payday so it actually happens."
                             : "Move the target date, lower the target, or free up money in your budget."));
             }

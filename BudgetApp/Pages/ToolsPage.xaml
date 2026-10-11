@@ -30,6 +30,7 @@
                     <StackPanel Margin="0,0,8,0">
                         <TextBlock x:Name="CalcTitle" Style="{StaticResource SectionHeader}" FontSize="20" Margin="0,0,0,4"/>
                         <TextBlock x:Name="CalcSummary" Style="{StaticResource PageSubtitle}" Margin="0,0,0,18"/>
+                        <StackPanel x:Name="InputTop"/>
                         <WrapPanel x:Name="InputPanel" Orientation="Horizontal"/>
                         <Border Height="1" Background="{StaticResource BorderBrush}" Margin="0,8,0,18"/>
                         <StackPanel x:Name="ResultPanel"/>

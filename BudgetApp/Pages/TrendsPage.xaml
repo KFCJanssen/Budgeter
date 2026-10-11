@@ -95,11 +95,11 @@
             </Border>
             <Border Grid.Column="1" Style="{StaticResource CardStyle}" Margin="8,0,0,0">
                 <DockPanel>
-                    <Grid DockPanel.Dock="Top">
-                        <TextBlock Text="One category over time" Style="{StaticResource SectionHeader}"/>
-                        <ComboBox x:Name="CategoryPicker" Width="190" HorizontalAlignment="Right" VerticalAlignment="Top" Margin="0,-4,0,0"
+                    <DockPanel DockPanel.Dock="Top">
+                        <ComboBox DockPanel.Dock="Right" x:Name="CategoryPicker" Width="170" VerticalAlignment="Top" Margin="8,-4,0,0"
                                   SelectionChanged="CategoryPicker_SelectionChanged"/>
-                    </Grid>
+                        <TextBlock Text="One category" Style="{StaticResource SectionHeader}" TextWrapping="NoWrap" TextTrimming="CharacterEllipsis"/>
+                    </DockPanel>
                     <TextBlock DockPanel.Dock="Top" x:Name="CategoryNote" Style="{StaticResource HintText}" Margin="0,-6,0,4"/>
                     <lvc:CartesianChart x:Name="CategoryChart"/>
                 </DockPanel>

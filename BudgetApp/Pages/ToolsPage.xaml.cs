@@ -99,6 +99,7 @@ namespace BudgetApp.Pages
             CalcTitle.Text = calc.Title;
             CalcSummary.Text = calc.Summary;
             InputPanel.Children.Clear();
+            InputTop.Children.Clear();
             ResultPanel.Children.Clear();
             _compute = null;
             calc.Build();
@@ -363,7 +364,7 @@ namespace BudgetApp.Pages
             var grid = new DataGrid
             {
                 ItemsSource = _debts, IsReadOnly = false, CanUserAddRows = true, CanUserDeleteRows = true, SelectionMode = DataGridSelectionMode.Single,
-                Margin = new Thickness(0, 4, 0, 12), MaxHeight = 220, Width = 640, HorizontalAlignment = HorizontalAlignment.Left
+                Margin = new Thickness(0, 4, 0, 12), MaxHeight = 220, MaxWidth = 720, HorizontalAlignment = HorizontalAlignment.Stretch
             };
             grid.Columns.Add(new DataGridTextColumn { Header = "Debt", Binding = new Binding(nameof(DebtRow.Name)), Width = new DataGridLength(2, DataGridLengthUnitType.Star) });
             grid.Columns.Add(new DataGridTextColumn { Header = "Balance (€)", Binding = new Binding(nameof(DebtRow.Balance)), Width = new DataGridLength(1, DataGridLengthUnitType.Star) });
@@ -371,10 +372,10 @@ namespace BudgetApp.Pages
             grid.Columns.Add(new DataGridTextColumn { Header = "Minimum / month (€)", Binding = new Binding(nameof(DebtRow.Minimum)), Width = new DataGridLength(1.3, DataGridLengthUnitType.Star) });
             grid.RowEditEnding += (_, _) => Dispatcher.BeginInvoke(new Action(Recalculate));
             grid.CellEditEnding += (_, _) => Dispatcher.BeginInvoke(new Action(Recalculate));
-            var holder = new StackPanel { Width = 680 };
+            var holder = new StackPanel { Margin = new Thickness(0, 0, 0, 6) };
             holder.Children.Add(new TextBlock { Text = "Your debts (click a cell to change it, type in the empty row to add one, select a row and press Delete to remove it)", Style = (Style)FindResource("InputLabel"), TextWrapping = TextWrapping.Wrap });
             holder.Children.Add(grid);
-            InputPanel.Children.Insert(0, holder);
+            InputTop.Children.Add(holder);
             if (_snap.Debts.Count > 0)
                 holder.Children.Add(new TextBlock { Text = "Filled in from the debts on your Profile page (mortgage left out).", Style = (Style)FindResource("HintText"), Margin = new Thickness(0, -6, 0, 10) });
 

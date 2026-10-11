@@ -24,7 +24,7 @@ namespace BudgetApp.Pages
                 });
                 foreach (var g in group)
                 {
-                    var button = new RadioButton { Content = g.Title, GroupName = "Guide", Style = (Style)FindResource("ListChoice") };
+                    var button = new RadioButton { Content = new TextBlock { Text = g.Title, TextWrapping = TextWrapping.Wrap }, GroupName = "Guide", Style = (Style)FindResource("ListChoice") };
                     button.Checked += (_, _) => Show(g);
                     _buttons[g.Id] = button;
                     GuideList.Children.Add(button);

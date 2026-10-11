@@ -31,7 +31,7 @@
 
         <Grid Grid.Row="1">
             <Grid.ColumnDefinitions>
-                <ColumnDefinition Width="470"/>
+                <ColumnDefinition Width="*" MaxWidth="560"/>
                 <ColumnDefinition Width="*"/>
             </Grid.ColumnDefinitions>
 
@@ -181,7 +181,7 @@
                 <DockPanel>
                     <TextBlock DockPanel.Dock="Top" Text="Health check" Style="{StaticResource SectionHeader}" Margin="0,0,0,2"/>
                     <TextBlock DockPanel.Dock="Top" x:Name="CheckIntro" Style="{StaticResource HintText}" Margin="0,0,0,12"/>
-                    <WrapPanel DockPanel.Dock="Top" x:Name="KpiPanel" Margin="0,0,0,6"/>
+                    <UniformGrid DockPanel.Dock="Top" x:Name="KpiPanel" Columns="2" Margin="0,0,0,6"/>
                     <TextBlock DockPanel.Dock="Bottom" Style="{StaticResource HintText}" Margin="0,10,0,0"
                                Text="General information based on simple rules and common guidelines - not personal financial advice. For big decisions, talk to a qualified adviser."/>
                     <ScrollViewer VerticalScrollBarVisibility="Auto">
