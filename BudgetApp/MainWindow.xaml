@@ -1,0 +1,275 @@
+<Window x:Class="BudgetApp.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:lvc="clr-namespace:LiveChartsCore.SkiaSharpView.WPF;assembly=LiveChartsCore.SkiaSharpView.WPF"
+        Title="Budget Dashboard" Height="800" Width="1300"
+        Background="#F4F5F9"
+        FontFamily="Segoe UI"
+        WindowStartupLocation="CenterScreen">
+
+    <Window.Resources>
+        <!-- Reusable "card" style: white rounded panel with a soft border, used everywhere -->
+        <Style x:Key="CardStyle" TargetType="Border">
+            <Setter Property="Background" Value="White"/>
+            <Setter Property="CornerRadius" Value="12"/>
+            <Setter Property="Padding" Value="18"/>
+            <Setter Property="BorderBrush" Value="#E4E6ED"/>
+            <Setter Property="BorderThickness" Value="1"/>
+            <Setter Property="Margin" Value="0,0,0,16"/>
+        </Style>
+
+        <Style x:Key="SectionHeader" TargetType="TextBlock">
+            <Setter Property="FontSize" Value="16"/>
+            <Setter Property="FontWeight" Value="SemiBold"/>
+            <Setter Property="Foreground" Value="#22243B"/>
+            <Setter Property="Margin" Value="0,0,0,12"/>
+        </Style>
+
+        <Style x:Key="InputLabel" TargetType="TextBlock">
+            <Setter Property="FontSize" Value="12"/>
+            <Setter Property="Foreground" Value="#767A8A"/>
+            <Setter Property="Margin" Value="0,0,0,4"/>
+        </Style>
+
+        <Style TargetType="TextBox">
+            <Setter Property="Padding" Value="8,7"/>
+            <Setter Property="BorderBrush" Value="#D8DAE5"/>
+            <Setter Property="BorderThickness" Value="1"/>
+            <Setter Property="Margin" Value="0,0,0,10"/>
+            <Setter Property="Background" Value="#FAFBFD"/>
+        </Style>
+
+        <Style TargetType="ComboBox">
+            <Setter Property="Padding" Value="8,6"/>
+            <Setter Property="Margin" Value="0,0,0,10"/>
+        </Style>
+
+        <Style TargetType="DatePicker">
+            <Setter Property="Padding" Value="8,6"/>
+            <Setter Property="Margin" Value="0,0,0,10"/>
+        </Style>
+
+        <!-- Primary action button (filled, accent color) -->
+        <Style x:Key="PrimaryButton" TargetType="Button">
+            <Setter Property="Background" Value="#4361EE"/>
+            <Setter Property="Foreground" Value="White"/>
+            <Setter Property="Padding" Value="14,9"/>
+            <Setter Property="BorderThickness" Value="0"/>
+            <Setter Property="FontWeight" Value="SemiBold"/>
+            <Setter Property="Cursor" Value="Hand"/>
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="Button">
+                        <Border Background="{TemplateBinding Background}" CornerRadius="8">
+                            <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                        </Border>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+
+        <!-- Secondary (outlined) button, used for delete/remove actions -->
+        <Style x:Key="SecondaryButton" TargetType="Button" BasedOn="{StaticResource PrimaryButton}">
+            <Setter Property="Background" Value="#FFECEC"/>
+            <Setter Property="Foreground" Value="#D64545"/>
+        </Style>
+
+        <!-- Small stat card used in the balance-sheet row -->
+        <Style x:Key="StatValue" TargetType="TextBlock">
+            <Setter Property="FontSize" Value="26"/>
+            <Setter Property="FontWeight" Value="Bold"/>
+        </Style>
+        <Style x:Key="StatLabel" TargetType="TextBlock">
+            <Setter Property="FontSize" Value="13"/>
+            <Setter Property="Foreground" Value="#767A8A"/>
+            <Setter Property="Margin" Value="0,0,0,6"/>
+        </Style>
+    </Window.Resources>
+
+    <Grid Margin="24">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>   <!-- Header -->
+            <RowDefinition Height="Auto"/>   <!-- Balance sheet cards -->
+            <RowDefinition Height="*"/>      <!-- Main content -->
+        </Grid.RowDefinitions>
+
+        <!-- ===================== HEADER ===================== -->
+        <Grid Grid.Row="0" Margin="0,0,0,20">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="*"/>
+                <ColumnDefinition Width="Auto"/>
+            </Grid.ColumnDefinitions>
+            <TextBlock Text="Budget Dashboard" FontSize="26" FontWeight="Bold" Foreground="#22243B"/>
+            <Button Grid.Column="1" x:Name="ExportCsvButton" Content="Export to CSV"
+                    Style="{StaticResource PrimaryButton}" Click="ExportCsvButton_Click"
+                    Width="150" Height="38"/>
+        </Grid>
+
+        <!-- ===================== BALANCE SHEET ===================== -->
+        <Grid Grid.Row="1" Margin="0,0,0,8">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="*"/>
+                <ColumnDefinition Width="*"/>
+                <ColumnDefinition Width="*"/>
+            </Grid.ColumnDefinitions>
+
+            <Border Grid.Column="0" Style="{StaticResource CardStyle}" Margin="0,0,8,16">
+                <StackPanel>
+                    <TextBlock Text="TOTAL INCOME" Style="{StaticResource StatLabel}"/>
+                    <TextBlock x:Name="TotalIncomeText" Text="€0.00" Style="{StaticResource StatValue}" Foreground="#2EC4B6"/>
+                </StackPanel>
+            </Border>
+
+            <Border Grid.Column="1" Style="{StaticResource CardStyle}" Margin="8,0,8,16">
+                <StackPanel>
+                    <TextBlock Text="TOTAL EXPENSES" Style="{StaticResource StatLabel}"/>
+                    <TextBlock x:Name="TotalExpensesText" Text="€0.00" Style="{StaticResource StatValue}" Foreground="#FF6B6B"/>
+                </StackPanel>
+            </Border>
+
+            <Border Grid.Column="2" Style="{StaticResource CardStyle}" Margin="8,0,0,16">
+                <StackPanel>
+                    <TextBlock Text="NET BALANCE" Style="{StaticResource StatLabel}"/>
+                    <TextBlock x:Name="NetBalanceText" Text="€0.00" Style="{StaticResource StatValue}" Foreground="#4361EE"/>
+                </StackPanel>
+            </Border>
+        </Grid>
+
+        <!-- ===================== MAIN CONTENT ===================== -->
+        <Grid Grid.Row="2">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="380"/>
+                <ColumnDefinition Width="*"/>
+            </Grid.ColumnDefinitions>
+
+            <!-- ---------- LEFT COLUMN: input forms ---------- -->
+            <ScrollViewer Grid.Column="0" Margin="0,0,16,0" VerticalScrollBarVisibility="Auto">
+                <StackPanel>
+
+                    <!-- Add transaction (income / expense) -->
+                    <Border Style="{StaticResource CardStyle}">
+                        <StackPanel>
+                            <TextBlock Text="Add Income / Expense" Style="{StaticResource SectionHeader}"/>
+
+                            <TextBlock Text="Type" Style="{StaticResource InputLabel}"/>
+                            <ComboBox x:Name="TypeComboBox" SelectedIndex="1">
+                                <ComboBoxItem Content="Income"/>
+                                <ComboBoxItem Content="Expense"/>
+                            </ComboBox>
+
+                            <TextBlock Text="Category" Style="{StaticResource InputLabel}"/>
+                            <ComboBox x:Name="CategoryComboBox" IsEditable="True"
+                                      ItemsSource="{Binding CategorySuggestions}"/>
+
+                            <TextBlock Text="Amount" Style="{StaticResource InputLabel}"/>
+                            <TextBox x:Name="AmountTextBox"/>
+
+                            <TextBlock Text="Date" Style="{StaticResource InputLabel}"/>
+                            <DatePicker x:Name="TransactionDatePicker"/>
+
+                            <TextBlock Text="Description" Style="{StaticResource InputLabel}"/>
+                            <TextBox x:Name="DescriptionTextBox"/>
+
+                            <Button Content="Add Entry" Style="{StaticResource PrimaryButton}"
+                                    Click="AddTransactionButton_Click" Height="38" Margin="0,4,0,0"/>
+                        </StackPanel>
+                    </Border>
+
+                    <!-- Add recurring / programmed expense -->
+                    <Border Style="{StaticResource CardStyle}">
+                        <StackPanel>
+                            <TextBlock Text="Add Programmed Expense" Style="{StaticResource SectionHeader}"/>
+
+                            <TextBlock Text="Name" Style="{StaticResource InputLabel}"/>
+                            <TextBox x:Name="RecurringNameTextBox"/>
+
+                            <TextBlock Text="Category" Style="{StaticResource InputLabel}"/>
+                            <ComboBox x:Name="RecurringCategoryComboBox" IsEditable="True"
+                                      ItemsSource="{Binding CategorySuggestions}"/>
+
+                            <TextBlock Text="Amount" Style="{StaticResource InputLabel}"/>
+                            <TextBox x:Name="RecurringAmountTextBox"/>
+
+                            <TextBlock Text="Frequency" Style="{StaticResource InputLabel}"/>
+                            <ComboBox x:Name="FrequencyComboBox" SelectedIndex="1">
+                                <ComboBoxItem Content="Weekly"/>
+                                <ComboBoxItem Content="Monthly"/>
+                                <ComboBoxItem Content="Yearly"/>
+                            </ComboBox>
+
+                            <Button Content="Add Recurring Expense" Style="{StaticResource PrimaryButton}"
+                                    Click="AddRecurringButton_Click" Height="38" Margin="0,4,0,0"/>
+                        </StackPanel>
+                    </Border>
+
+                </StackPanel>
+            </ScrollViewer>
+
+            <!-- ---------- RIGHT COLUMN: chart + lists ---------- -->
+            <Grid Grid.Column="1">
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="320"/>
+                    <RowDefinition Height="*"/>
+                </Grid.RowDefinitions>
+
+                <Grid Grid.Row="0">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="*"/>
+                        <ColumnDefinition Width="*"/>
+                    </Grid.ColumnDefinitions>
+
+                    <!-- Pie chart: expense breakdown as % of total income -->
+                    <Border Grid.Column="0" Style="{StaticResource CardStyle}" Margin="0,0,8,16">
+                        <StackPanel>
+                            <TextBlock Text="Expenses as Share of Income" Style="{StaticResource SectionHeader}"/>
+                            <lvc:PieChart x:Name="ExpensePieChart" Height="230" LegendPosition="Right"/>
+                        </StackPanel>
+                    </Border>
+
+                    <!-- Programmed expenses list -->
+                    <Border Grid.Column="1" Style="{StaticResource CardStyle}" Margin="8,0,0,16">
+                        <DockPanel>
+                            <TextBlock DockPanel.Dock="Top" Text="Programmed Expenses" Style="{StaticResource SectionHeader}"/>
+                            <DataGrid x:Name="RecurringGrid" AutoGenerateColumns="False" IsReadOnly="True"
+                                      HeadersVisibility="Column" GridLinesVisibility="None"
+                                      Background="Transparent" BorderThickness="0" RowHeight="32"
+                                      SelectionChanged="RecurringGrid_SelectionChanged">
+                                <DataGrid.Columns>
+                                    <DataGridTextColumn Header="Name" Binding="{Binding Name}" Width="*"/>
+                                    <DataGridTextColumn Header="Category" Binding="{Binding Category}" Width="*"/>
+                                    <DataGridTextColumn Header="Monthly" Binding="{Binding MonthlyAmount, StringFormat={}{0:C2}}" Width="Auto"/>
+                                </DataGrid.Columns>
+                            </DataGrid>
+                            <Button DockPanel.Dock="Bottom" Content="Remove Selected"
+                                    Style="{StaticResource SecondaryButton}" Height="32" Margin="0,8,0,0"
+                                    Click="DeleteRecurringButton_Click"/>
+                        </DockPanel>
+                    </Border>
+                </Grid>
+
+                <!-- Transaction log -->
+                <Border Grid.Row="1" Style="{StaticResource CardStyle}">
+                    <DockPanel>
+                        <TextBlock DockPanel.Dock="Top" Text="Transaction History" Style="{StaticResource SectionHeader}"/>
+                        <Button DockPanel.Dock="Bottom" Content="Delete Selected Entry"
+                                Style="{StaticResource SecondaryButton}" Height="32" Margin="0,8,0,0"
+                                HorizontalAlignment="Left" Width="180"
+                                Click="DeleteTransactionButton_Click"/>
+                        <DataGrid x:Name="TransactionsGrid" AutoGenerateColumns="False" IsReadOnly="True"
+                                  HeadersVisibility="Column" GridLinesVisibility="Horizontal"
+                                  Background="Transparent" BorderThickness="0" RowHeight="32"
+                                  SelectionChanged="TransactionsGrid_SelectionChanged">
+                            <DataGrid.Columns>
+                                <DataGridTextColumn Header="Date" Binding="{Binding Date, StringFormat=yyyy-MM-dd}" Width="100"/>
+                                <DataGridTextColumn Header="Type" Binding="{Binding Type}" Width="90"/>
+                                <DataGridTextColumn Header="Category" Binding="{Binding Category}" Width="*"/>
+                                <DataGridTextColumn Header="Amount" Binding="{Binding Amount, StringFormat={}{0:C2}}" Width="110"/>
+                                <DataGridTextColumn Header="Description" Binding="{Binding Description}" Width="2*"/>
+                            </DataGrid.Columns>
+                        </DataGrid>
+                    </DockPanel>
+                </Border>
+            </Grid>
+        </Grid>
+    </Grid>
+</Window>

@@ -1,0 +1,14 @@
+# .NET / Visual Studio build output
+bin/
+obj/
+publish/
+.vs/
+*.user
+*.suo
+
+# Built executables and release archives (attach these to GitHub Releases instead)
+*.exe
+*.zip
+
+# Local database
+*.db
