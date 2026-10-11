@@ -51,6 +51,26 @@ jobs:
           if (Test-Path selftest-out/selftest.log) { Get-Content selftest-out/selftest.log }
           exit $p.ExitCode
 
+      - name: Updater test (an old version updates itself to the latest release)
+        timeout-minutes: 5
+        shell: pwsh
+        run: |
+          dotnet publish BudgetApp/BudgetApp.csproj -c Release -r win-x64 --self-contained true -p:BudgeterVersion=1.9 `
+            -p:PublishSingleFile=true -p:IncludeNativeLibrariesForSelfExtract=true -p:EnableCompressionInSingleFile=true -o updtest | Out-Null
+          $exe = Resolve-Path "updtest/BudgetApp.exe"
+          "Before: " + (Get-Item $exe).VersionInfo.ProductVersion
+          $p = Start-Process -FilePath $exe -ArgumentList '--update-test' -Wait -PassThru
+          "Exit code: " + $p.ExitCode
+          if (Test-Path updtest/update-test-error.txt) { Get-Content updtest/update-test-error.txt; exit 1 }
+          for ($i = 0; $i -lt 30 -and -not (Test-Path updtest/BudgetApp.old.exe); $i++) { Start-Sleep 1 }
+          Start-Sleep 2
+          $after = (Get-Item updtest/BudgetApp.exe).VersionInfo.ProductVersion
+          "After: $after"
+          Get-ChildItem updtest | Format-Table Name, Length
+          if (-not (Test-Path updtest/BudgetApp.old.exe)) { "Old version wasn't kept aside"; exit 1 }
+          if ($after -like "1.9*") { "Not updated"; exit 1 }
+          "Updater works"
+
       - name: Publish screenshots to the ci-screenshots branch
         if: always()
         shell: bash

@@ -84,7 +84,7 @@ namespace BudgetApp.Services
         }
 
         /// <summary>Downloads the new exe and restarts into it. Only for the single-file release build.</summary>
-        public static async Task DownloadAndRestartAsync(UpdateInfo update)
+        public static async Task DownloadAndRestartAsync(UpdateInfo update, bool restart = true)
         {
             if (AppPaths.IsDevelopmentBuild)
                 throw new InvalidOperationException("This is a development build; it can't replace itself.");
@@ -120,7 +120,7 @@ namespace BudgetApp.Services
                 $"del /f /q \"{oldExe}\" >nul 2>&1\r\n" +
                 $"move /y \"{exe}\" \"{oldExe}\" >nul\r\n" +
                 $"move /y \"{newExe}\" \"{exe}\" >nul\r\n" +
-                $"start \"\" \"{exe}\"\r\n" +
+                (restart ? $"start \"\" \"{exe}\"\r\n" : "") +
                 "(goto) 2>nul & del \"%~f0\"\r\n");
 
             Process.Start(new ProcessStartInfo("cmd.exe", $"/c \"{script}\"")

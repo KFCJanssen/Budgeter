@@ -31,6 +31,30 @@ namespace BudgetApp
                 return;
             }
 
+            // "BudgetApp.exe --update-test": checks GitHub and installs a newer release without restarting
+            // (used by GitHub Actions with a build that pretends to be an old version).
+            if (e.Args.Any(a => a.Equals("--update-test", StringComparison.OrdinalIgnoreCase)))
+            {
+                base.OnStartup(e);
+                AppState.Unattended = true;
+                ShutdownMode = ShutdownMode.OnExplicitShutdown;
+                Dispatcher.BeginInvoke(new Action(async () =>
+                {
+                    try
+                    {
+                        var update = await Services.UpdateService.CheckAsync();
+                        if (update == null) { Shutdown(3); return; }
+                        await Services.UpdateService.DownloadAndRestartAsync(update, restart: false);
+                    }
+                    catch (Exception ex)
+                    {
+                        File.WriteAllText(Path.Combine(AppPaths.ExeFolder, "update-test-error.txt"), ex.ToString());
+                        Shutdown(4);
+                    }
+                }));
+                return;
+            }
+
             DispatcherUnhandledException += OnUnhandledException;
             base.OnStartup(e);
 
