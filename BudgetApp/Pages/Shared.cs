@@ -103,7 +103,7 @@ namespace BudgetApp.Pages
                 {
                     Values = new[] { slice.Amount },
                     Name = slice.Label,
-                    ToolTipLabelFormatter = tooltip ? _ => $"{Money.Format(slice.Amount)} ({Pct(share)})" : null,
+                    ToolTipLabelFormatter = tooltip ? _ => $"{Money.Format(slice.Amount)} ({Pct(share)})" : null!,
                     DataLabelsPaint = labels ? new SolidColorPaint(SKColors.White) : null,
                     DataLabelsSize = 12,
                     DataLabelsFormatter = labels ? _ => share >= 0.10m ? Pct(share) : "" : null,

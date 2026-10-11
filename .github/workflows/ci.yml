@@ -2,7 +2,7 @@ name: Build & Test
 
 # Checks every branch and pull request on Windows:
 #  1. logic tests (BudgetApp.Tests)
-#  2. builds the app
+#  2. builds BudgetApp.exe exactly like a release (single file)
 #  3. runs the app's self-test: upgrades a 1.0 database, imports bank files, makes the PDF and
 #     screenshots every page. The screenshots, log and PDF are pushed to the "ci-screenshots" branch.
 # (Pushes to main are covered by release.yml, which runs the same checks before releasing.)
@@ -29,11 +29,12 @@ jobs:
         shell: bash
         run: dotnet run --project BudgetApp.Tests -c Release
 
-      - name: Build app
+      - name: Build BudgetApp.exe (same single-file build as a release)
         shell: bash
         run: |
           set -o pipefail
-          dotnet build BudgetApp/BudgetApp.csproj -c Release -clp:NoSummary 2>&1 | tee build.log
+          dotnet publish BudgetApp/BudgetApp.csproj -c Release -r win-x64 --self-contained true \
+            -p:PublishSingleFile=true -p:IncludeNativeLibrariesForSelfExtract=true -o publish -clp:NoSummary 2>&1 | tee build.log
 
       - name: Screen size for screenshots
         if: ${{ !contains(github.workflow, 'Release') || steps.ver.outputs.exists == 'false' }}
@@ -45,7 +46,7 @@ jobs:
         timeout-minutes: 10
         shell: pwsh
         run: |
-          $exe = Resolve-Path "BudgetApp/bin/Release/net8.0-windows/BudgetApp.exe"
+          $exe = Resolve-Path "publish/BudgetApp.exe"
           $p = Start-Process -FilePath $exe -ArgumentList '--self-test', "$PWD\selftest-out" -Wait -PassThru
           if (Test-Path selftest-out/selftest.log) { Get-Content selftest-out/selftest.log }
           exit $p.ExitCode

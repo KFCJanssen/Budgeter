@@ -41,6 +41,13 @@ jobs:
         shell: bash
         run: dotnet run --project BudgetApp.Tests -c Release
 
+      - name: Build BudgetApp.exe
+        if: steps.ver.outputs.exists == 'false'
+        shell: bash
+        run: |
+          dotnet publish BudgetApp/BudgetApp.csproj -c Release -r win-x64 --self-contained true \
+            -p:PublishSingleFile=true -p:IncludeNativeLibrariesForSelfExtract=true -o publish
+
       - name: Screen size for screenshots
         if: ${{ !contains(github.workflow, 'Release') || steps.ver.outputs.exists == 'false' }}
         continue-on-error: true
@@ -52,18 +59,10 @@ jobs:
         timeout-minutes: 10
         shell: pwsh
         run: |
-          dotnet build BudgetApp/BudgetApp.csproj -c Release
-          $exe = Resolve-Path "BudgetApp/bin/Release/net8.0-windows/BudgetApp.exe"
+          $exe = Resolve-Path "publish/BudgetApp.exe"
           $p = Start-Process -FilePath $exe -ArgumentList '--self-test', "$PWD\selftest-out" -Wait -PassThru
           if (Test-Path selftest-out/selftest.log) { Get-Content selftest-out/selftest.log }
           exit $p.ExitCode
-
-      - name: Build BudgetApp.exe
-        if: steps.ver.outputs.exists == 'false'
-        shell: bash
-        run: |
-          dotnet publish BudgetApp/BudgetApp.csproj -c Release -r win-x64 --self-contained true \
-            -p:PublishSingleFile=true -p:IncludeNativeLibrariesForSelfExtract=true -o publish
 
       - name: Publish release
         if: steps.ver.outputs.exists == 'false'

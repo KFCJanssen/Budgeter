@@ -5,8 +5,6 @@
     <Grid>
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto"/>
-            <RowDefinition Height="Auto"/>
-            <RowDefinition Height="1.1*"/>
             <RowDefinition Height="*"/>
         </Grid.RowDefinitions>
 
@@ -26,7 +24,9 @@
             </StackPanel>
         </Grid>
 
-        <Grid Grid.Row="1">
+        <ScrollViewer Grid.Row="1" VerticalScrollBarVisibility="Auto" Padding="0,0,4,0">
+        <StackPanel>
+        <Grid>
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="*"/>
                 <ColumnDefinition Width="*"/>
@@ -63,7 +63,7 @@
             </Border>
         </Grid>
 
-        <Border Grid.Row="2" Style="{StaticResource CardStyle}">
+        <Border Style="{StaticResource CardStyle}" Height="370">
             <DockPanel>
                 <TextBlock DockPanel.Dock="Top" Text="Income and spending per month" Style="{StaticResource SectionHeader}" Margin="0,0,0,4"/>
                 <Grid>
@@ -74,7 +74,7 @@
             </DockPanel>
         </Border>
 
-        <Grid Grid.Row="3">
+        <Grid Height="340">
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="*"/>
                 <ColumnDefinition Width="*"/>
@@ -105,5 +105,7 @@
                 </DockPanel>
             </Border>
         </Grid>
+        </StackPanel>
+        </ScrollViewer>
     </Grid>
 </UserControl>
