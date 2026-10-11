@@ -36,6 +36,11 @@ jobs:
         with:
           dotnet-version: "8.0.x"
 
+      - name: Run tests
+        if: steps.ver.outputs.exists == 'false'
+        shell: bash
+        run: dotnet run --project BudgetApp.Tests -c Release
+
       - name: Build BudgetApp.exe
         if: steps.ver.outputs.exists == 'false'
         shell: bash

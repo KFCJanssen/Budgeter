@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using System.Globalization;
 using System.IO;
@@ -9,65 +10,78 @@ namespace BudgetApp.Services
 {
     /// <summary>
     /// Builds the CSV file used by the "Export to CSV" button.
-    /// Written by hand with StreamBuilder/File.WriteAllText (no extra NuGet package needed) -
-    /// the format is simple enough that a CSV library like CsvHelper isn't required. If your
-    /// data grows more complex later, CsvHelper (NuGet) is a drop-in alternative.
+    /// Excel splits CSV columns using the Windows list separator (';' on Dutch systems, ',' on
+    /// US/UK ones) and reads numbers using the Windows decimal separator, so the file is written
+    /// with the separators of the given culture - that way it opens as proper columns and numbers.
     /// </summary>
     public static class CsvExportService
     {
-        public static void Export(
-            string filePath,
+        public static string Build(
             IEnumerable<Transaction> transactions,
             IEnumerable<RecurringExpense> recurringExpenses,
-            decimal totalIncome,
-            decimal totalExpenses,
-            decimal netBalance)
+            BudgetPeriod period,
+            DateTime today,
+            CultureInfo culture)
         {
+            var sep = culture.TextInfo.ListSeparator;
+            if (string.IsNullOrEmpty(sep)) sep = ",";
+            var nf = culture.NumberFormat;
+            string Num(decimal d) => d.ToString("0.00", nf);
+            string Row(params string[] fields) => string.Join(sep, fields.Select(f => Escape(f, sep)));
+
+            var txList = transactions.Where(t => period.Contains(t.Date)).OrderBy(t => t.Date).ToList();
+            var recList = recurringExpenses.ToList();
+            var summary = BudgetCalculator.Summarize(txList, recList, period, today);
+
             var sb = new StringBuilder();
 
-            // ---- Summary block ----
-            sb.AppendLine("Budget Summary");
-            sb.AppendLine($"Total Income,{totalIncome.ToString(CultureInfo.InvariantCulture)}");
-            sb.AppendLine($"Total Expenses,{totalExpenses.ToString(CultureInfo.InvariantCulture)}");
-            sb.AppendLine($"Net Balance,{netBalance.ToString(CultureInfo.InvariantCulture)}");
+            sb.AppendLine(Row("Budget Summary", period.Label));
+            sb.AppendLine(Row("Total Income", Num(summary.Income)));
+            sb.AppendLine(Row("Total Expenses", Num(summary.TotalExpenses)));
+            sb.AppendLine(Row("Net Balance", Num(summary.Net)));
             sb.AppendLine();
 
-            // ---- Line-by-line transaction log ----
-            sb.AppendLine("Date,Type,Category,Amount,Description");
+            sb.AppendLine(Row("Date", "Type", "Category", "Amount", "Description"));
 
-            foreach (var t in transactions.OrderBy(t => t.Date))
+            foreach (var t in txList)
             {
-                sb.AppendLine(string.Join(",",
-                    t.Date.ToString("yyyy-MM-dd"),
+                sb.AppendLine(Row(
+                    t.Date.ToString("yyyy-MM-dd", CultureInfo.InvariantCulture),
                     t.Type.ToString(),
-                    Escape(t.Category),
-                    t.Amount.ToString(CultureInfo.InvariantCulture),
-                    Escape(t.Description)));
+                    t.Category,
+                    Num(t.Amount),
+                    t.Description));
             }
 
-            // Active recurring expenses are appended to the same log (as their monthly-equivalent
-            // amount) so the export is a single, complete record of everything factored into totals.
-            foreach (var r in recurringExpenses.Where(r => r.IsActive).OrderBy(r => r.Name))
+            // Recurring costs are listed with the amount they contribute to this period's totals,
+            // so the rows add up to the summary above.
+            foreach (var r in recList.OrderBy(r => r.Name))
             {
-                sb.AppendLine(string.Join(",",
-                    r.StartDate.ToString("yyyy-MM-dd"),
+                var cost = BudgetCalculator.RecurringCost(r, period, today);
+                if (cost <= 0) continue;
+                int months = BudgetCalculator.MonthsActive(r, period, today);
+                var note = months > 1 ? $"{r.Name} - {r.Frequency}, {months} months" : $"{r.Name} - {r.Frequency}";
+                sb.AppendLine(Row(
+                    r.StartDate.ToString("yyyy-MM-dd", CultureInfo.InvariantCulture),
                     "Expense (Recurring)",
-                    Escape(r.Category),
-                    r.MonthlyAmount.ToString(CultureInfo.InvariantCulture),
-                    Escape($"{r.Name} - {r.Frequency}")));
+                    r.Category,
+                    Num(cost),
+                    note));
             }
 
-            File.WriteAllText(filePath, sb.ToString(), Encoding.UTF8);
+            return sb.ToString();
         }
 
-        // Wraps a field in quotes and escapes internal quotes if it contains a comma, quote, or newline.
-        private static string Escape(string field)
+        public static void Export(string filePath, string csv) =>
+            // UTF-8 with BOM so Excel shows characters like € and é correctly.
+            File.WriteAllText(filePath, csv, new UTF8Encoding(encoderShouldEmitUTF8Identifier: true));
+
+        // Quotes a field if it contains the separator, a quote or a line break.
+        internal static string Escape(string? field, string sep)
         {
             if (string.IsNullOrEmpty(field)) return string.Empty;
-            if (field.Contains(',') || field.Contains('"') || field.Contains('\n'))
-            {
+            if (field.Contains(sep) || field.Contains('"') || field.Contains('\n') || field.Contains('\r'))
                 return $"\"{field.Replace("\"", "\"\"")}\"";
-            }
             return field;
         }
     }

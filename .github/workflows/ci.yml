@@ -1,0 +1,27 @@
+name: Build & Test
+
+# Checks every branch and pull request: runs the logic tests and builds the Windows app.
+# (Pushes to main are covered by release.yml, which runs the same checks before releasing.)
+on:
+  push:
+    branches-ignore: [main]
+  pull_request:
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: windows-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: "8.0.x"
+
+      - name: Run tests
+        shell: bash
+        run: dotnet run --project BudgetApp.Tests -c Release
+
+      - name: Build app
+        shell: bash
+        run: dotnet build BudgetApp/BudgetApp.csproj -c Release
