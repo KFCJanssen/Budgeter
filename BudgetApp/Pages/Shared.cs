@@ -12,6 +12,7 @@ using LiveChartsCore;
 using LiveChartsCore.SkiaSharpView;
 using LiveChartsCore.SkiaSharpView.Painting;
 using LiveChartsCore.SkiaSharpView.WPF;
+using LiveChartsCore.Kernel.Sketches;
 using SkiaSharp;
 
 namespace BudgetApp.Pages

@@ -31,7 +31,9 @@ jobs:
 
       - name: Build app
         shell: bash
-        run: dotnet build BudgetApp/BudgetApp.csproj -c Release
+        run: |
+          set -o pipefail
+          dotnet build BudgetApp/BudgetApp.csproj -c Release -clp:NoSummary 2>&1 | tee build.log
 
       - name: Self-test (upgrade, imports, PDF, screenshots)
         timeout-minutes: 10
@@ -52,6 +54,7 @@ jobs:
           mkdir -p "$out"
           cp -r selftest-out/screens "$out/" 2>/dev/null || true
           cp selftest-out/*.png selftest-out/selftest.log selftest-out/*.pdf "$out/" 2>/dev/null || true
+          grep -E "error|warning (CS|MC|NU)" build.log | sed 's/^.*\\BudgetApp\\//' | sort -u > "$out/build-errors.txt" 2>/dev/null || true
           cd "$out"
           echo "$GITHUB_SHA $GITHUB_REF_NAME" > COMMIT
           git init -q -b ci-screenshots
