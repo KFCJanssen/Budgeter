@@ -128,8 +128,31 @@
                         <TextBlock DockPanel.Dock="Top" x:Name="ChartHeader" Text="Where the income goes" Style="{StaticResource SectionHeader}" Margin="0,0,0,2"/>
                         <TextBlock DockPanel.Dock="Top" x:Name="ChartSubHeader" Text=" " Style="{StaticResource HintText}" Margin="0,0,0,6"/>
                         <Grid>
-                            <lvc:PieChart x:Name="Pie" LegendPosition="Right"/>
-                            <TextBlock x:Name="ChartEmpty" Text="Add income and expenses for this period to see the breakdown."
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="Auto"/>
+                                <ColumnDefinition Width="*"/>
+                            </Grid.ColumnDefinitions>
+                            <!-- The chart's own legend needs a lot of room; this list is the legend instead. -->
+                            <lvc:PieChart x:Name="Pie" LegendPosition="Hidden" Width="150" Height="150" VerticalAlignment="Center" Margin="0,0,14,0"/>
+                            <ScrollViewer Grid.Column="1" VerticalScrollBarVisibility="Auto" VerticalAlignment="Center">
+                                <ItemsControl x:Name="PieLegend">
+                                    <ItemsControl.ItemTemplate>
+                                        <DataTemplate>
+                                            <Grid Margin="0,2" ToolTip="{Binding Tip}">
+                                                <Grid.ColumnDefinitions>
+                                                    <ColumnDefinition Width="14"/>
+                                                    <ColumnDefinition Width="*"/>
+                                                    <ColumnDefinition Width="Auto"/>
+                                                </Grid.ColumnDefinitions>
+                                                <Ellipse Width="8" Height="8" Fill="{Binding Brush}" VerticalAlignment="Center"/>
+                                                <TextBlock Grid.Column="1" Text="{Binding Label}" FontSize="12" Foreground="{StaticResource TextBrush}" TextTrimming="CharacterEllipsis"/>
+                                                <TextBlock Grid.Column="2" Text="{Binding Share}" FontSize="12" Foreground="{StaticResource MutedBrush}" Margin="6,0,0,0"/>
+                                            </Grid>
+                                        </DataTemplate>
+                                    </ItemsControl.ItemTemplate>
+                                </ItemsControl>
+                            </ScrollViewer>
+                            <TextBlock Grid.ColumnSpan="2" x:Name="ChartEmpty" Text="Add income and expenses for this period to see the breakdown."
                                        Style="{StaticResource HintText}" HorizontalAlignment="Center" VerticalAlignment="Center"
                                        TextAlignment="Center" MaxWidth="240" Visibility="Collapsed"/>
                         </Grid>

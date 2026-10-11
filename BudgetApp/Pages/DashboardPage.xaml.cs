@@ -56,7 +56,7 @@ namespace BudgetApp.Pages
                 : " ";
 
             // Pie
-            bool hasPie = Look.FillPie(Pie, s);
+            bool hasPie = Look.FillPie(Pie, s, PieLegend);
             ChartEmpty.Visibility = hasPie ? Visibility.Collapsed : Visibility.Visible;
             if (!hasPie) { ChartHeader.Text = "Where the income goes"; ChartSubHeader.Text = " "; }
             else if (s.SlicesAreShareOfIncome) { ChartHeader.Text = "Where the income goes"; ChartSubHeader.Text = $"Share of {Money.Format(s.Income)} income"; }

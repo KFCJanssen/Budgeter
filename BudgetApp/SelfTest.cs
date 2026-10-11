@@ -384,57 +384,6 @@ namespace BudgetApp
             await Idle(300);
         }
 
-        /// <summary>Isolated pie-chart experiments, to see which setup draws the slices.</summary>
-        private static async Task PieDiagnostics()
-        {
-            async Task Try(string name, bool setBeforeShow, TimeSpan? speed, int wait)
-            {
-                var pie = new LiveChartsCore.SkiaSharpView.WPF.PieChart { Width = 400, Height = 300, LegendPosition = LiveChartsCore.Measure.LegendPosition.Right };
-                if (speed is TimeSpan sp) pie.AnimationsSpeed = sp;
-                LiveChartsCore.ISeries[] series =
-                {
-                    new LiveChartsCore.SkiaSharpView.PieSeries<decimal> { Values = new[] { 300m }, Name = "A" },
-                    new LiveChartsCore.SkiaSharpView.PieSeries<decimal> { Values = new[] { 200m }, Name = "B" },
-                };
-                if (setBeforeShow) pie.Series = series;
-                var w = new Window { Content = pie, SizeToContent = SizeToContent.WidthAndHeight, Left = 0, Top = 0, ShowActivated = false, Background = Brushes.White };
-                w.Show();
-                if (!setBeforeShow) { await Idle(100); pie.Series = series; }
-                await Idle(wait);
-                SaveVisual(pie, (int)pie.ActualWidth, (int)pie.ActualHeight, Brushes.White, Path.Combine(_out, "screens", $"diag-{name}.png"));
-                w.Close();
-                Line($"ok    pie diagnostic {name}");
-            }
-            await Try("a-before-default", true, null, 1500);
-            await Try("b-before-1ms", true, TimeSpan.FromMilliseconds(1), 600);
-            await Try("c-after-default", false, null, 1500);
-            await Try("d-after-1ms", false, TimeSpan.FromMilliseconds(1), 600);
-            await Try("e-before-zero", true, TimeSpan.Zero, 600);
-
-            // Our own pie-building code, standalone.
-            var summary = BudgetCalculator.Summarize(AppState.Store.Transactions, AppState.Store.Recurring, BudgetPeriod.ForMonth(DateTime.Today.AddMonths(-2)), DateTime.Today);
-            Line($"      pie slices: {string.Join(", ", summary.Slices.Select(x => $"{x.Label}={x.Amount}"))}");
-            async Task Ours(string name, bool labels, bool tooltip)
-            {
-                var pie = new LiveChartsCore.SkiaSharpView.WPF.PieChart { Width = 460, Height = 300, LegendPosition = LiveChartsCore.Measure.LegendPosition.Right };
-                var w = new Window { Content = pie, SizeToContent = SizeToContent.WidthAndHeight, Left = 0, Top = 0, ShowActivated = false, Background = Brushes.White };
-                w.Show();
-                await Idle(100);
-                Look.FillPie(pie, summary, labels, tooltip);
-                await Idle(800);
-                SaveVisual(pie, (int)pie.ActualWidth, (int)pie.ActualHeight, Brushes.White, Path.Combine(_out, "screens", $"diag-{name}.png"));
-                w.Close();
-            }
-            await Ours("f-ours", true, true);
-            await Ours("g-ours-nolabels", false, true);
-            await Ours("h-ours-notooltip", true, false);
-            await Ours("i-ours-bare", false, false);
-
-            var dash = (DashboardPage)((MainWindow)Application.Current.MainWindow).GetPage(PageKey.Dashboard);
-            var dp = (LiveChartsCore.SkiaSharpView.WPF.PieChart)dash.FindName("Pie");
-            Line($"      dashboard pie: {dp.ActualWidth}x{dp.ActualHeight}, loaded {dp.IsLoaded}, visible {dp.IsVisible}, series {dp.Series?.Count()}");
-        }
-
         private static void SaveVisual(Visual root, int w, int h, Brush background, string file)
         {
             var visual = new DrawingVisual();
@@ -454,25 +403,11 @@ namespace BudgetApp
 
         private static async Task Screenshots()
         {
-            await PieDiagnostics();
             var window = (MainWindow)Application.Current.MainWindow;
             var store = AppState.Store;
             AppState.Period = BudgetPeriod.ForMonth(DateTime.Today.AddMonths(-2));
 
             await Shot("01-dashboard", PageKey.Dashboard);
-            {
-                var dash = (DashboardPage)window.GetPage(PageKey.Dashboard);
-                var dp = (LiveChartsCore.SkiaSharpView.WPF.PieChart)dash.FindName("Pie");
-                await Idle(1000);
-                Line($"      dashboard pie now: {dp.ActualWidth}x{dp.ActualHeight}, loaded {dp.IsLoaded}, visible {dp.IsVisible}, series {dp.Series?.Count()}");
-                SaveVisual(dp, Math.Max(1, (int)dp.ActualWidth), Math.Max(1, (int)dp.ActualHeight), Brushes.White, Path.Combine(_out, "screens", "diag-j-dashboard-pie-alone.png"));
-                dp.Series = dp.Series.ToArray();
-                await Idle(800);
-                SaveVisual(dp, Math.Max(1, (int)dp.ActualWidth), Math.Max(1, (int)dp.ActualHeight), Brushes.White, Path.Combine(_out, "screens", "diag-k-dashboard-pie-reassigned.png"));
-                try { dp.CoreChart.Update(new LiveChartsCore.Kernel.ChartUpdateParams { IsAutomaticUpdate = false, Throttling = false }); } catch (Exception ex) { Line("      update failed: " + ex.Message); }
-                await Idle(800);
-                SaveVisual(dp, Math.Max(1, (int)dp.ActualWidth), Math.Max(1, (int)dp.ActualHeight), Brushes.White, Path.Combine(_out, "screens", "diag-l-dashboard-pie-updated.png"));
-            }
             await Shot("02-transactions", PageKey.Transactions);
             var someTx = store.Transactions.Where(t => t.Payee != null && t.Date.Month == DateTime.Today.AddMonths(-2).Month).OrderByDescending(t => t.Date).First();
             await Shot("03-transactions-edit", PageKey.Transactions, someTx);
@@ -498,6 +433,11 @@ namespace BudgetApp
             await Shot("16-transactions-uncategorized", PageKey.Transactions, TransactionsPage.ShowUncategorized);
             AppState.Toast("Example toast message", "Undo", () => { });
             await Shot("17-toast", PageKey.Dashboard);
+
+            // Wider window (e.g. a 1920x1080 screen at 100-125% scaling)
+            window.Width = 1600; window.Height = 900;
+            await Shot("18-dashboard-wide", PageKey.Dashboard);
+            await Shot("19-transactions-wide", PageKey.Transactions);
         }
 
         private static async Task Shot(string name, PageKey? page, object? argument = null)

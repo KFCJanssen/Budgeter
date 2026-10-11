@@ -62,15 +62,18 @@ namespace BudgetApp.Pages
         }
 
         /// <summary>Builds the "where the income goes" pie. Returns false when there's nothing to show.</summary>
-        public static bool FillPie(PieChart pie, BudgetSummary s, bool labels = true, bool tooltip = true)
+        public static bool FillPie(PieChart pie, BudgetSummary s, ItemsControl? legend = null, bool labels = true, bool tooltip = true)
         {
             Prepare(pie);
             decimal whole = s.SlicesAreShareOfIncome ? s.Income : s.TotalExpenses;
             if (s.Slices.Count == 0 || whole <= 0)
             {
                 pie.Series = Array.Empty<ISeries>();
+                if (legend != null) legend.ItemsSource = null;
+                pie.Visibility = Visibility.Hidden;
                 return false;
             }
+            pie.Visibility = Visibility.Visible;
 
             // Keep the chart readable: the 7 largest categories, the rest as "Other".
             var slices = s.Slices.Where(x => !x.IsLeftOver).ToList();
@@ -82,10 +85,19 @@ namespace BudgetApp.Pages
             }
             slices.AddRange(s.Slices.Where(x => x.IsLeftOver));
 
+            var colors = new List<SKColor>();
             int colorIndex = 0;
+            foreach (var slice in slices) colors.Add(slice.IsLeftOver ? LeftOver : ChartColors[colorIndex++ % ChartColors.Length]);
+
+            if (legend != null)
+                legend.ItemsSource = slices.Select((slice, i) => new LegendItem(
+                    slice.Label, Pct(slice.Amount / whole), $"{slice.Label}: {Money.Format(slice.Amount)} ({Pct(slice.Amount / whole)})",
+                    new SolidColorBrush(Color.FromRgb(colors[i].Red, colors[i].Green, colors[i].Blue)))).ToList();
+
+            int index = 0;
             pie.Series = slices.Select(slice =>
             {
-                var color = slice.IsLeftOver ? LeftOver : ChartColors[colorIndex++ % ChartColors.Length];
+                var color = colors[index++];
                 var share = slice.Amount / whole;
                 return new PieSeries<decimal>
                 {
@@ -94,7 +106,7 @@ namespace BudgetApp.Pages
                     ToolTipLabelFormatter = tooltip ? _ => $"{Money.Format(slice.Amount)} ({Pct(share)})" : null,
                     DataLabelsPaint = labels ? new SolidColorPaint(SKColors.White) : null,
                     DataLabelsSize = 12,
-                    DataLabelsFormatter = labels ? _ => share >= 0.06m ? Pct(share) : "" : null,
+                    DataLabelsFormatter = labels ? _ => share >= 0.10m ? Pct(share) : "" : null,
                     Fill = new SolidColorPaint(color)
                 };
             }).ToArray<ISeries>();
@@ -143,6 +155,9 @@ namespace BudgetApp.Pages
 
         public static string AmountForEditing(decimal d) => d.ToString("0.00", Money.Culture);
     }
+
+    /// <summary>One line of a chart legend.</summary>
+    public sealed record LegendItem(string Label, string Share, string Tip, Brush Brush);
 
     /// <summary>A transaction as shown in short lists.</summary>
     public sealed class TxView
