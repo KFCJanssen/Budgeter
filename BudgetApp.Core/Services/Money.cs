@@ -22,6 +22,26 @@ namespace BudgetApp.Services
         /// - Otherwise a single separator is the decimal separator.
         /// The result is rounded to cents. Negative numbers are rejected (the type field decides the sign).
         /// </summary>
+        /// <summary>
+        /// Like <see cref="TryParse"/> but allows a leading '+' or '-' (and a trailing '-'),
+        /// as found in bank exports: "-30,00", "+442,98".
+        /// </summary>
+        public static bool TryParseSigned(string? input, out decimal amount)
+        {
+            amount = 0;
+            if (string.IsNullOrWhiteSpace(input)) return false;
+            var s = input.Trim().Replace("−", "-");   // unicode minus
+            bool negative = false;
+            if (s.StartsWith('-') || s.StartsWith('+')) { negative = s[0] == '-'; s = s[1..]; }
+            else if (s.EndsWith('-')) { negative = true; s = s[..^1]; }
+            s = s.Trim();
+            if (s.StartsWith('€')) s = s[1..].Trim();
+            if (s.StartsWith('-')) { negative = true; s = s[1..]; }   // "€ -12,50"
+            if (!TryParse(s, out var value)) return false;
+            amount = negative ? -value : value;
+            return true;
+        }
+
         public static bool TryParse(string? input, out decimal amount)
         {
             amount = 0;

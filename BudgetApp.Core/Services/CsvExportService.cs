@@ -18,7 +18,7 @@ namespace BudgetApp.Services
     {
         public static string Build(
             IEnumerable<Transaction> transactions,
-            IEnumerable<RecurringExpense> recurringExpenses,
+            IEnumerable<RecurringItem> recurringItems,
             BudgetPeriod period,
             DateTime today,
             CultureInfo culture)
@@ -30,7 +30,7 @@ namespace BudgetApp.Services
             string Row(params string[] fields) => string.Join(sep, fields.Select(f => Escape(f, sep)));
 
             var txList = transactions.Where(t => period.Contains(t.Date)).OrderBy(t => t.Date).ToList();
-            var recList = recurringExpenses.ToList();
+            var recList = recurringItems.ToList();
             var summary = BudgetCalculator.Summarize(txList, recList, period, today);
 
             var sb = new StringBuilder();
@@ -41,16 +41,21 @@ namespace BudgetApp.Services
             sb.AppendLine(Row("Net Balance", Num(summary.Net)));
             sb.AppendLine();
 
-            sb.AppendLine(Row("Date", "Type", "Category", "Amount", "Description"));
+            sb.AppendLine(Row("Date", "Type", "Category", "Amount", "Payee", "Description", "Note"));
 
             foreach (var t in txList)
             {
+                var note = t.Type == TransactionType.Transfer ? "Transfer between own accounts, not counted"
+                         : t.RecurringId != null ? "Paid by a programmed item, not counted twice"
+                         : "";
                 sb.AppendLine(Row(
                     t.Date.ToString("yyyy-MM-dd", CultureInfo.InvariantCulture),
                     t.Type.ToString(),
                     t.Category,
                     Num(t.Amount),
-                    t.Description));
+                    t.Payee ?? "",
+                    t.Description,
+                    note));
             }
 
             // Recurring costs are listed with the amount they contribute to this period's totals,
@@ -63,10 +68,12 @@ namespace BudgetApp.Services
                 var note = months > 1 ? $"{r.Name} - {r.Frequency}, {months} months" : $"{r.Name} - {r.Frequency}";
                 sb.AppendLine(Row(
                     r.StartDate.ToString("yyyy-MM-dd", CultureInfo.InvariantCulture),
-                    "Expense (Recurring)",
+                    r.IsIncome ? "Income (Programmed)" : "Expense (Programmed)",
                     r.Category,
                     Num(cost),
-                    note));
+                    "",
+                    note,
+                    ""));
             }
 
             return sb.ToString();

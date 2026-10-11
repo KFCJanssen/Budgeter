@@ -41,6 +41,17 @@ jobs:
         shell: bash
         run: dotnet run --project BudgetApp.Tests -c Release
 
+      - name: Self-test (upgrade, imports, PDF, screenshots)
+        if: steps.ver.outputs.exists == 'false'
+        timeout-minutes: 10
+        shell: pwsh
+        run: |
+          dotnet build BudgetApp/BudgetApp.csproj -c Release
+          $exe = Resolve-Path "BudgetApp/bin/Release/net8.0-windows/BudgetApp.exe"
+          $p = Start-Process -FilePath $exe -ArgumentList '--self-test', "$PWD\selftest-out" -Wait -PassThru
+          if (Test-Path selftest-out/selftest.log) { Get-Content selftest-out/selftest.log }
+          exit $p.ExitCode
+
       - name: Build BudgetApp.exe
         if: steps.ver.outputs.exists == 'false'
         shell: bash

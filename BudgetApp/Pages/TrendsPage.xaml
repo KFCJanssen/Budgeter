@@ -1,0 +1,109 @@
+<UserControl x:Class="BudgetApp.Pages.TrendsPage"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:lvc="clr-namespace:LiveChartsCore.SkiaSharpView.WPF;assembly=LiveChartsCore.SkiaSharpView.WPF">
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="1.1*"/>
+            <RowDefinition Height="*"/>
+        </Grid.RowDefinitions>
+
+        <Grid Margin="0,0,0,18">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="*"/>
+                <ColumnDefinition Width="Auto"/>
+            </Grid.ColumnDefinitions>
+            <StackPanel>
+                <TextBlock Text="Trends" Style="{StaticResource PageTitle}"/>
+                <TextBlock Text="How your income and spending develop over the months." Style="{StaticResource PageSubtitle}"/>
+            </StackPanel>
+            <StackPanel Grid.Column="1" Orientation="Horizontal" VerticalAlignment="Center">
+                <RadioButton x:Name="Range6" Content="6 months" GroupName="Range" Style="{StaticResource SegmentButton}" Checked="Range_Checked"/>
+                <RadioButton x:Name="Range12" Content="12 months" GroupName="Range" Style="{StaticResource SegmentButton}" IsChecked="True" Checked="Range_Checked"/>
+                <RadioButton x:Name="Range24" Content="24 months" GroupName="Range" Style="{StaticResource SegmentButton}" Checked="Range_Checked"/>
+            </StackPanel>
+        </Grid>
+
+        <Grid Grid.Row="1">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="*"/>
+                <ColumnDefinition Width="*"/>
+                <ColumnDefinition Width="*"/>
+                <ColumnDefinition Width="*"/>
+            </Grid.ColumnDefinitions>
+            <Border Style="{StaticResource CardStyle}" Margin="0,0,8,16">
+                <StackPanel>
+                    <TextBlock Text="AVERAGE INCOME" Style="{StaticResource StatLabel}"/>
+                    <TextBlock x:Name="AvgIncome" Style="{StaticResource StatValue}" FontSize="22" Foreground="{StaticResource GoodBrush}"/>
+                    <TextBlock x:Name="AvgNote" Style="{StaticResource StatSub}"/>
+                </StackPanel>
+            </Border>
+            <Border Grid.Column="1" Style="{StaticResource CardStyle}" Margin="8,0,8,16">
+                <StackPanel>
+                    <TextBlock Text="AVERAGE SPENDING" Style="{StaticResource StatLabel}"/>
+                    <TextBlock x:Name="AvgSpending" Style="{StaticResource StatValue}" FontSize="22" Foreground="#FF6B6B"/>
+                    <TextBlock x:Name="SpendTrend" Style="{StaticResource StatSub}"/>
+                </StackPanel>
+            </Border>
+            <Border Grid.Column="2" Style="{StaticResource CardStyle}" Margin="8,0,8,16">
+                <StackPanel>
+                    <TextBlock Text="AVERAGE SAVINGS RATE" Style="{StaticResource StatLabel}"/>
+                    <TextBlock x:Name="AvgRate" Style="{StaticResource StatValue}" FontSize="22"/>
+                    <TextBlock x:Name="AvgSaved" Style="{StaticResource StatSub}"/>
+                </StackPanel>
+            </Border>
+            <Border Grid.Column="3" Style="{StaticResource CardStyle}" Margin="8,0,0,16">
+                <StackPanel>
+                    <TextBlock Text="BEST MONTH" Style="{StaticResource StatLabel}"/>
+                    <TextBlock x:Name="BestMonth" Style="{StaticResource StatValue}" FontSize="22"/>
+                    <TextBlock x:Name="BestNote" Style="{StaticResource StatSub}"/>
+                </StackPanel>
+            </Border>
+        </Grid>
+
+        <Border Grid.Row="2" Style="{StaticResource CardStyle}">
+            <DockPanel>
+                <TextBlock DockPanel.Dock="Top" Text="Income and spending per month" Style="{StaticResource SectionHeader}" Margin="0,0,0,4"/>
+                <Grid>
+                    <lvc:CartesianChart x:Name="MonthChart" LegendPosition="Top"/>
+                    <TextBlock x:Name="ChartEmpty" Style="{StaticResource HintText}" HorizontalAlignment="Center" VerticalAlignment="Center"
+                               Text="No data yet. Add or import transactions to see your trends." Visibility="Collapsed"/>
+                </Grid>
+            </DockPanel>
+        </Border>
+
+        <Grid Grid.Row="3">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="*"/>
+                <ColumnDefinition Width="*"/>
+            </Grid.ColumnDefinitions>
+            <Border Style="{StaticResource CardStyle}" Margin="0,0,8,0">
+                <DockPanel>
+                    <TextBlock DockPanel.Dock="Top" Text="Month by month" Style="{StaticResource SectionHeader}" Margin="0,0,0,6"/>
+                    <DataGrid x:Name="MonthGrid">
+                        <DataGrid.Columns>
+                            <DataGridTextColumn Header="Month" Binding="{Binding Label}" Width="*"/>
+                            <DataGridTextColumn Header="Income" Binding="{Binding Income, Converter={StaticResource Euro}}" Width="*" ElementStyle="{StaticResource RightAligned}"/>
+                            <DataGridTextColumn Header="Spending" Binding="{Binding Expenses, Converter={StaticResource Euro}}" Width="*" ElementStyle="{StaticResource RightAligned}"/>
+                            <DataGridTextColumn Header="Net" Binding="{Binding Net, Converter={StaticResource Euro}}" Width="*" ElementStyle="{StaticResource RightAligned}"/>
+                            <DataGridTextColumn Header="Kept" Binding="{Binding SavingsRate, StringFormat={}{0:P0}}" Width="60" ElementStyle="{StaticResource RightAligned}"/>
+                        </DataGrid.Columns>
+                    </DataGrid>
+                </DockPanel>
+            </Border>
+            <Border Grid.Column="1" Style="{StaticResource CardStyle}" Margin="8,0,0,0">
+                <DockPanel>
+                    <Grid DockPanel.Dock="Top">
+                        <TextBlock Text="One category over time" Style="{StaticResource SectionHeader}"/>
+                        <ComboBox x:Name="CategoryPicker" Width="190" HorizontalAlignment="Right" VerticalAlignment="Top" Margin="0,-4,0,0"
+                                  SelectionChanged="CategoryPicker_SelectionChanged"/>
+                    </Grid>
+                    <TextBlock DockPanel.Dock="Top" x:Name="CategoryNote" Style="{StaticResource HintText}" Margin="0,-6,0,4"/>
+                    <lvc:CartesianChart x:Name="CategoryChart"/>
+                </DockPanel>
+            </Border>
+        </Grid>
+    </Grid>
+</UserControl>

@@ -1,0 +1,16 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <!-- All of Budgeter's logic that doesn't need Windows: models, money maths, bank import,
+       calculators, advice. Deliberately has no NuGet packages so it can be built and tested anywhere. -->
+  <PropertyGroup>
+    <TargetFramework>net8.0</TargetFramework>
+    <Nullable>enable</Nullable>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <RootNamespace>BudgetApp</RootNamespace>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <InternalsVisibleTo Include="BudgetApp.Tests" />
+  </ItemGroup>
+
+</Project>

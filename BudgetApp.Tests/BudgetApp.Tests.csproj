@@ -1,20 +1,16 @@
 <Project Sdk="Microsoft.NET.Sdk">
 
-  <!-- Dependency-free tests for Budgeter's money and budget logic (no NuGet packages needed).
+  <!-- Dependency-free tests for Budgeter's logic (no NuGet packages needed).
        Run with: dotnet run, from the BudgetApp.Tests folder (exit code 0 = all passed) -->
   <PropertyGroup>
     <OutputType>Exe</OutputType>
     <TargetFramework>net8.0</TargetFramework>
     <Nullable>enable</Nullable>
     <ImplicitUsings>enable</ImplicitUsings>
-    <InvariantGlobalization>false</InvariantGlobalization>
   </PropertyGroup>
 
   <ItemGroup>
-    <Compile Include="..\BudgetApp\Models\*.cs" Link="Linked\Models\%(Filename)%(Extension)" />
-    <Compile Include="..\BudgetApp\Services\Money.cs" Link="Linked\Services\Money.cs" />
-    <Compile Include="..\BudgetApp\Services\BudgetCalculator.cs" Link="Linked\Services\BudgetCalculator.cs" />
-    <Compile Include="..\BudgetApp\Services\CsvExportService.cs" Link="Linked\Services\CsvExportService.cs" />
+    <ProjectReference Include="..\BudgetApp.Core\BudgetApp.Core.csproj" />
   </ItemGroup>
 
 </Project>

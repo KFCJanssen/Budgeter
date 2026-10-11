@@ -12,3 +12,6 @@ publish/
 
 # Local database
 *.db
+
+# Self-test output
+selftest-out/

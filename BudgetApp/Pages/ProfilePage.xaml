@@ -1,0 +1,220 @@
+<UserControl x:Class="BudgetApp.Pages.ProfilePage"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="*"/>
+        </Grid.RowDefinitions>
+
+        <Grid Margin="0,0,0,18">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="*"/>
+                <ColumnDefinition Width="Auto"/>
+                <ColumnDefinition Width="Auto"/>
+            </Grid.ColumnDefinitions>
+            <StackPanel>
+                <TextBlock Text="Financial profile" Style="{StaticResource PageTitle}"/>
+                <TextBlock Text="Your situation in one place, a health check against common guidelines, and a PDF report to keep."
+                           Style="{StaticResource PageSubtitle}"/>
+            </StackPanel>
+            <StackPanel Grid.Column="1" Orientation="Horizontal" VerticalAlignment="Center" Margin="0,0,12,0">
+                <TextBlock Text="Look at the last" Foreground="{StaticResource MutedBrush}" VerticalAlignment="Center" Margin="0,0,8,0"/>
+                <ComboBox x:Name="MonthsBox" Width="120" Margin="0" SelectionChanged="MonthsBox_SelectionChanged">
+                    <ComboBoxItem Content="3 months"/>
+                    <ComboBoxItem Content="6 months"/>
+                    <ComboBoxItem Content="12 months"/>
+                </ComboBox>
+            </StackPanel>
+            <Button Grid.Column="2" Content="Create PDF report" Style="{StaticResource PrimaryButton}" Height="36" Click="Pdf_Click"/>
+        </Grid>
+
+        <Grid Grid.Row="1">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="470"/>
+                <ColumnDefinition Width="*"/>
+            </Grid.ColumnDefinitions>
+
+            <ScrollViewer VerticalScrollBarVisibility="Auto" Margin="0,0,16,0">
+                <StackPanel>
+                    <!-- About you -->
+                    <Border Style="{StaticResource CardStyle}">
+                        <StackPanel>
+                            <TextBlock Text="About you" Style="{StaticResource SectionHeader}"/>
+                            <Grid>
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="*"/>
+                                    <ColumnDefinition Width="12"/>
+                                    <ColumnDefinition Width="120"/>
+                                </Grid.ColumnDefinitions>
+                                <StackPanel>
+                                    <TextBlock Text="Name" Style="{StaticResource InputLabel}"/>
+                                    <TextBox x:Name="NameBox"/>
+                                </StackPanel>
+                                <StackPanel Grid.Column="2">
+                                    <TextBlock Text="Birth year" Style="{StaticResource InputLabel}"/>
+                                    <TextBox x:Name="BirthYearBox"/>
+                                </StackPanel>
+                            </Grid>
+                            <Grid>
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="*"/>
+                                    <ColumnDefinition Width="12"/>
+                                    <ColumnDefinition Width="*"/>
+                                </Grid.ColumnDefinitions>
+                                <StackPanel>
+                                    <TextBlock Text="Household" Style="{StaticResource InputLabel}"/>
+                                    <ComboBox x:Name="HouseholdBox" IsEditable="True"/>
+                                </StackPanel>
+                                <StackPanel Grid.Column="2">
+                                    <TextBlock Text="Housing" Style="{StaticResource InputLabel}"/>
+                                    <ComboBox x:Name="HousingBox" IsEditable="True"/>
+                                </StackPanel>
+                            </Grid>
+                            <TextBlock Text="Work / study" Style="{StaticResource InputLabel}"/>
+                            <ComboBox x:Name="WorkBox" IsEditable="True"/>
+                            <TextBlock Text="Your financial goals (in your own words)" Style="{StaticResource InputLabel}"/>
+                            <TextBox x:Name="GoalsBox" AcceptsReturn="True" TextWrapping="Wrap" Height="64" VerticalScrollBarVisibility="Auto"/>
+                            <Button Content="Save" Style="{StaticResource QuietButton}" HorizontalAlignment="Left" Width="90" Click="SaveProfile_Click"/>
+                        </StackPanel>
+                    </Border>
+
+                    <!-- Balance sheet -->
+                    <Border Style="{StaticResource CardStyle}">
+                        <StackPanel>
+                            <TextBlock Text="What you own and owe" Style="{StaticResource SectionHeader}" Margin="0,0,0,2"/>
+                            <TextBlock Style="{StaticResource HintText}" Margin="0,0,0,10"
+                                       Text="Balances of your accounts, investments and debts. Update them every few months."/>
+                            <Grid Margin="0,0,0,10">
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="*"/>
+                                    <ColumnDefinition Width="*"/>
+                                    <ColumnDefinition Width="*"/>
+                                </Grid.ColumnDefinitions>
+                                <StackPanel>
+                                    <TextBlock Text="OWN" Style="{StaticResource StatLabel}"/>
+                                    <TextBlock x:Name="AssetsText" FontSize="17" FontWeight="Bold" Foreground="{StaticResource GoodBrush}"/>
+                                </StackPanel>
+                                <StackPanel Grid.Column="1">
+                                    <TextBlock Text="OWE" Style="{StaticResource StatLabel}"/>
+                                    <TextBlock x:Name="DebtsText" FontSize="17" FontWeight="Bold" Foreground="{StaticResource BadBrush}"/>
+                                </StackPanel>
+                                <StackPanel Grid.Column="2">
+                                    <TextBlock Text="NET WORTH" Style="{StaticResource StatLabel}"/>
+                                    <TextBlock x:Name="NetWorthText" FontSize="17" FontWeight="Bold"/>
+                                </StackPanel>
+                            </Grid>
+                            <DataGrid x:Name="BalanceGrid" MaxHeight="230" MouseDoubleClick="BalanceGrid_MouseDoubleClick">
+                                <DataGrid.Columns>
+                                    <DataGridTextColumn Header="Name" Binding="{Binding Name}" Width="*" ElementStyle="{StaticResource Ellipsis}"/>
+                                    <DataGridTextColumn Header="Kind" Binding="{Binding KindText}" Width="100"/>
+                                    <DataGridTextColumn Header="Amount" Binding="{Binding AmountText}" Width="95">
+                                        <DataGridTextColumn.ElementStyle>
+                                            <Style TargetType="TextBlock">
+                                                <Setter Property="HorizontalAlignment" Value="Right"/>
+                                                <Setter Property="FontWeight" Value="SemiBold"/>
+                                                <Setter Property="Foreground" Value="{Binding Brush}"/>
+                                            </Style>
+                                        </DataGridTextColumn.ElementStyle>
+                                    </DataGridTextColumn>
+                                    <DataGridTextColumn Header="Interest" Binding="{Binding RateText}" Width="60" ElementStyle="{StaticResource RightAligned}"/>
+                                </DataGrid.Columns>
+                            </DataGrid>
+                            <StackPanel Orientation="Horizontal" Margin="0,8,0,12">
+                                <Button Content="Edit" Style="{StaticResource QuietButton}" Width="70" Click="EditBalance_Click"/>
+                                <Button Content="Remove" Style="{StaticResource DangerButton}" Width="80" Margin="8,0,0,0" Click="DeleteBalance_Click"/>
+                            </StackPanel>
+
+                            <Border Style="{StaticResource SoftPanel}">
+                                <StackPanel KeyDown="BalanceForm_KeyDown">
+                                    <TextBlock x:Name="BalanceFormHeader" Text="Add" FontWeight="SemiBold" Foreground="{StaticResource TextBrush}" Margin="0,0,0,8"/>
+                                    <Grid>
+                                        <Grid.ColumnDefinitions>
+                                            <ColumnDefinition Width="*"/>
+                                            <ColumnDefinition Width="10"/>
+                                            <ColumnDefinition Width="*"/>
+                                        </Grid.ColumnDefinitions>
+                                        <StackPanel>
+                                            <TextBlock Text="Kind" Style="{StaticResource InputLabel}"/>
+                                            <ComboBox x:Name="KindBox" DisplayMemberPath="Label" SelectionChanged="KindBox_SelectionChanged"/>
+                                        </StackPanel>
+                                        <StackPanel Grid.Column="2">
+                                            <TextBlock Text="Name" Style="{StaticResource InputLabel}"/>
+                                            <TextBox x:Name="BalanceName"/>
+                                        </StackPanel>
+                                    </Grid>
+                                    <Grid>
+                                        <Grid.ColumnDefinitions>
+                                            <ColumnDefinition Width="*"/>
+                                            <ColumnDefinition Width="10"/>
+                                            <ColumnDefinition Width="*"/>
+                                            <ColumnDefinition Width="10"/>
+                                            <ColumnDefinition Width="*"/>
+                                        </Grid.ColumnDefinitions>
+                                        <StackPanel>
+                                            <TextBlock Text="Balance (€)" Style="{StaticResource InputLabel}"/>
+                                            <TextBox x:Name="BalanceAmount"/>
+                                        </StackPanel>
+                                        <StackPanel Grid.Column="2" x:Name="RatePanel">
+                                            <TextBlock Text="Interest (%/yr)" Style="{StaticResource InputLabel}"/>
+                                            <TextBox x:Name="BalanceRate"/>
+                                        </StackPanel>
+                                        <StackPanel Grid.Column="4" x:Name="PaymentPanel">
+                                            <TextBlock Text="Pay / month (€)" Style="{StaticResource InputLabel}"/>
+                                            <TextBox x:Name="BalancePayment"/>
+                                        </StackPanel>
+                                    </Grid>
+                                    <StackPanel Orientation="Horizontal">
+                                        <Button x:Name="BalanceSave" Content="Add" Style="{StaticResource PrimaryButton}" Width="90" Click="SaveBalance_Click"/>
+                                        <Button x:Name="BalanceCancel" Content="Cancel" Style="{StaticResource QuietButton}" Margin="8,0,0,0"
+                                                Click="CancelBalance_Click" Visibility="Collapsed"/>
+                                    </StackPanel>
+                                </StackPanel>
+                            </Border>
+                        </StackPanel>
+                    </Border>
+                </StackPanel>
+            </ScrollViewer>
+
+            <!-- Health check -->
+            <Border Grid.Column="1" Style="{StaticResource CardStyle}" Margin="0">
+                <DockPanel>
+                    <TextBlock DockPanel.Dock="Top" Text="Health check" Style="{StaticResource SectionHeader}" Margin="0,0,0,2"/>
+                    <TextBlock DockPanel.Dock="Top" x:Name="CheckIntro" Style="{StaticResource HintText}" Margin="0,0,0,12"/>
+                    <WrapPanel DockPanel.Dock="Top" x:Name="KpiPanel" Margin="0,0,0,6"/>
+                    <TextBlock DockPanel.Dock="Bottom" Style="{StaticResource HintText}" Margin="0,10,0,0"
+                               Text="General information based on simple rules and common guidelines - not personal financial advice. For big decisions, talk to a qualified adviser."/>
+                    <ScrollViewer VerticalScrollBarVisibility="Auto">
+                        <ItemsControl x:Name="AdviceList">
+                            <ItemsControl.ItemTemplate>
+                                <DataTemplate>
+                                    <Border Background="{StaticResource PageBrush}" CornerRadius="10" Margin="0,0,0,10">
+                                        <Grid>
+                                            <Grid.ColumnDefinitions>
+                                                <ColumnDefinition Width="5"/>
+                                                <ColumnDefinition Width="*"/>
+                                            </Grid.ColumnDefinitions>
+                                            <Border Background="{Binding Brush}" CornerRadius="10,0,0,10"/>
+                                            <StackPanel Grid.Column="1" Margin="14,10,14,12">
+                                                <StackPanel Orientation="Horizontal">
+                                                    <Border Background="{Binding SoftBrush}" CornerRadius="9" Padding="8,1" Margin="0,0,8,0" VerticalAlignment="Center">
+                                                        <TextBlock Text="{Binding LevelText}" FontSize="11" FontWeight="SemiBold" Foreground="{Binding Brush}"/>
+                                                    </Border>
+                                                    <TextBlock Text="{Binding Area}" FontSize="11" Foreground="{StaticResource FaintBrush}" VerticalAlignment="Center"/>
+                                                </StackPanel>
+                                                <TextBlock Text="{Binding Title}" FontWeight="SemiBold" FontSize="14" Foreground="{StaticResource TextBrush}"
+                                                           TextWrapping="Wrap" Margin="0,6,0,2"/>
+                                                <TextBlock Text="{Binding Finding}" Style="{StaticResource BodyText}" Foreground="{StaticResource MutedBrush}"/>
+                                                <TextBlock Text="{Binding Suggestion}" Style="{StaticResource BodyText}" Margin="0,4,0,0"/>
+                                            </StackPanel>
+                                        </Grid>
+                                    </Border>
+                                </DataTemplate>
+                            </ItemsControl.ItemTemplate>
+                        </ItemsControl>
+                    </ScrollViewer>
+                </DockPanel>
+            </Border>
+        </Grid>
+    </Grid>
+</UserControl>

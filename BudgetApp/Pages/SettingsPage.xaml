@@ -1,0 +1,96 @@
+<UserControl x:Class="BudgetApp.Pages.SettingsPage"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="*"/>
+        </Grid.RowDefinitions>
+        <StackPanel Margin="0,0,0,18">
+            <TextBlock Text="Settings" Style="{StaticResource PageTitle}"/>
+            <TextBlock Text="Updates, backups and import options." Style="{StaticResource PageSubtitle}"/>
+        </StackPanel>
+
+        <ScrollViewer Grid.Row="1" VerticalScrollBarVisibility="Auto">
+            <Grid>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="*"/>
+                    <ColumnDefinition Width="*"/>
+                </Grid.ColumnDefinitions>
+
+                <StackPanel Margin="0,0,16,0">
+                    <!-- Updates -->
+                    <Border Style="{StaticResource CardStyle}">
+                        <StackPanel>
+                            <TextBlock Text="Updates" Style="{StaticResource SectionHeader}"/>
+                            <TextBlock x:Name="VersionInfo" Style="{StaticResource BodyText}"/>
+                            <TextBlock x:Name="LocationInfo" Style="{StaticResource HintText}" Margin="0,4,0,10"/>
+                            <Border x:Name="DevWarning" Background="{StaticResource WarnSoftBrush}" CornerRadius="8" Padding="12" Margin="0,0,0,12" Visibility="Collapsed">
+                                <StackPanel>
+                                    <TextBlock Text="You're running a development build" FontWeight="SemiBold" Foreground="{StaticResource WarnBrush}"/>
+                                    <TextBlock Style="{StaticResource BodyText}" Margin="0,4,0,6"
+                                               Text="This copy was started from a Visual Studio build folder. It can't update itself. Follow the guide to make one permanent BudgetApp.exe and point your shortcut at it."/>
+                                    <Button Content="Open the guide" Style="{StaticResource LinkButton}" Click="ShortcutGuide_Click"/>
+                                </StackPanel>
+                            </Border>
+                            <TextBlock x:Name="UpdateStatus" Style="{StaticResource BodyText}" Margin="0,0,0,10"/>
+                            <WrapPanel>
+                                <Button x:Name="CheckButton" Content="Check for updates" Style="{StaticResource PrimaryButton}" Margin="0,0,8,8" Click="Check_Click"/>
+                                <Button x:Name="InstallButton" Content="Install update" Style="{StaticResource PrimaryButton}" Margin="0,0,8,8" Click="Install_Click" Visibility="Collapsed"/>
+                                <Button Content="Open download page" Style="{StaticResource QuietButton}" Margin="0,0,8,8" Click="DownloadPage_Click"/>
+                            </WrapPanel>
+                            <CheckBox x:Name="AutoCheck" Content="Check for updates automatically (once a day, when Budgeter starts)"
+                                      Margin="0,6,0,0" Checked="AutoCheck_Changed" Unchecked="AutoCheck_Changed"/>
+                        </StackPanel>
+                    </Border>
+
+                    <!-- Import -->
+                    <Border Style="{StaticResource CardStyle}">
+                        <StackPanel>
+                            <TextBlock Text="Bank imports" Style="{StaticResource SectionHeader}"/>
+                            <CheckBox x:Name="BuiltInRules" Content="Recognise well-known Dutch shops and companies automatically"
+                                      Checked="BuiltInRules_Changed" Unchecked="BuiltInRules_Changed"/>
+                            <TextBlock Style="{StaticResource HintText}" Margin="22,2,0,14"
+                                       Text="E.g. Albert Heijn → Groceries, NS → Transport, Ziggo → Utilities. Your own rules always come first."/>
+                            <TextBlock Text="Your own account numbers (IBANs)" Style="{StaticResource InputLabel}"/>
+                            <TextBox x:Name="MyAccounts" AcceptsReturn="True" TextWrapping="Wrap" Height="70" VerticalScrollBarVisibility="Auto"/>
+                            <TextBlock Style="{StaticResource HintText}" Margin="0,-4,0,10"
+                                       Text="One per line. Money moved to or from these accounts is marked as a transfer, so it isn't counted as income or spending. Accounts that appear in the same import file are recognised automatically."/>
+                            <Button Content="Save accounts" Style="{StaticResource QuietButton}" HorizontalAlignment="Left" Click="SaveAccounts_Click"/>
+                        </StackPanel>
+                    </Border>
+                </StackPanel>
+
+                <StackPanel Grid.Column="1">
+                    <!-- Backups -->
+                    <Border Style="{StaticResource CardStyle}">
+                        <StackPanel>
+                            <TextBlock Text="Your data &amp; backups" Style="{StaticResource SectionHeader}"/>
+                            <TextBlock x:Name="DataInfo" Style="{StaticResource BodyText}"/>
+                            <TextBlock x:Name="DataPath" Style="{StaticResource HintText}" Margin="0,4,0,10" TextWrapping="Wrap"/>
+                            <TextBlock x:Name="BackupInfo" Style="{StaticResource BodyText}" Margin="0,0,0,12"/>
+                            <WrapPanel>
+                                <Button Content="Back up now" Style="{StaticResource PrimaryButton}" Margin="0,0,8,8" Click="BackupNow_Click"/>
+                                <Button Content="Open backups folder" Style="{StaticResource QuietButton}" Margin="0,0,8,8" Click="OpenBackups_Click"/>
+                                <Button Content="Restore from backup…" Style="{StaticResource DangerButton}" Margin="0,0,8,8" Click="Restore_Click"/>
+                            </WrapPanel>
+                            <Button Content="How backups work" Style="{StaticResource LinkButton}" Margin="0,4,0,0" HorizontalAlignment="Left" Click="BackupGuide_Click"/>
+                        </StackPanel>
+                    </Border>
+
+                    <!-- About -->
+                    <Border Style="{StaticResource CardStyle}">
+                        <StackPanel>
+                            <TextBlock Text="About" Style="{StaticResource SectionHeader}"/>
+                            <TextBlock Style="{StaticResource BodyText}"
+                                       Text="Budgeter is your personal budget app. Everything stays on this computer; the app only goes online to check GitHub for updates."/>
+                            <Button Content="Budgeter on GitHub" Style="{StaticResource LinkButton}" Margin="0,8,0,0" HorizontalAlignment="Left" Click="GitHub_Click"/>
+                            <TextBlock Style="{StaticResource HintText}" Margin="0,10,0,0"
+                                       Text="Charts by LiveCharts2. PDF reports by QuestPDF (Community license). Database: SQLite."/>
+                        </StackPanel>
+                    </Border>
+                </StackPanel>
+            </Grid>
+        </ScrollViewer>
+    </Grid>
+</UserControl>

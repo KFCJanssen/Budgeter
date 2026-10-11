@@ -1,0 +1,41 @@
+<UserControl x:Class="BudgetApp.Pages.ToolsPage"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="*"/>
+        </Grid.RowDefinitions>
+
+        <StackPanel Margin="0,0,0,18">
+            <TextBlock Text="Calculators" Style="{StaticResource PageTitle}"/>
+            <TextBlock Text="Money questions you'll run into in life. Where it makes sense, your own numbers are filled in - change anything to try other situations."
+                       Style="{StaticResource PageSubtitle}"/>
+        </StackPanel>
+
+        <Grid Grid.Row="1">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="270"/>
+                <ColumnDefinition Width="*"/>
+            </Grid.ColumnDefinitions>
+
+            <Border Style="{StaticResource CardStyle}" Margin="0,0,16,0" Padding="10">
+                <ScrollViewer VerticalScrollBarVisibility="Auto">
+                    <StackPanel x:Name="CalculatorList"/>
+                </ScrollViewer>
+            </Border>
+
+            <Border Grid.Column="1" Style="{StaticResource CardStyle}" Margin="0">
+                <ScrollViewer VerticalScrollBarVisibility="Auto" x:Name="CalcScroll">
+                    <StackPanel Margin="0,0,8,0">
+                        <TextBlock x:Name="CalcTitle" Style="{StaticResource SectionHeader}" FontSize="20" Margin="0,0,0,4"/>
+                        <TextBlock x:Name="CalcSummary" Style="{StaticResource PageSubtitle}" Margin="0,0,0,18"/>
+                        <WrapPanel x:Name="InputPanel" Orientation="Horizontal"/>
+                        <Border Height="1" Background="{StaticResource BorderBrush}" Margin="0,8,0,18"/>
+                        <StackPanel x:Name="ResultPanel"/>
+                    </StackPanel>
+                </ScrollViewer>
+            </Border>
+        </Grid>
+    </Grid>
+</UserControl>

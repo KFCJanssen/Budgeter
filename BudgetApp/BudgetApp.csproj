@@ -6,18 +6,33 @@
     <Nullable>enable</Nullable>
     <UseWPF>true</UseWPF>
     <ImplicitUsings>enable</ImplicitUsings>
+    <AssemblyName>BudgetApp</AssemblyName>
+    <Product>Budgeter</Product>
+    <ApplicationIcon>Assets\budgeter.ico</ApplicationIcon>
+    <!-- The version comes from the VERSION file in the repo root, so the app knows which release it is. -->
+    <BudgeterVersion>$([System.IO.File]::ReadAllText('$(MSBuildThisFileDirectory)..\VERSION').Trim())</BudgeterVersion>
+    <Version>$(BudgeterVersion)</Version>
+    <AssemblyVersion>$(BudgeterVersion).0.0</AssemblyVersion>
+    <FileVersion>$(BudgeterVersion).0.0</FileVersion>
+    <!-- Lets build servers (GitHub Actions) compile this on any OS. -->
+    <EnableWindowsTargeting>true</EnableWindowsTargeting>
   </PropertyGroup>
 
   <ItemGroup>
-    <!-- SQLite provider for EF Core -->
+    <ProjectReference Include="..\BudgetApp.Core\BudgetApp.Core.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <!-- SQLite database through EF Core -->
     <PackageReference Include="Microsoft.EntityFrameworkCore.Sqlite" Version="8.0.10" />
-    <!-- Design-time tools, needed for 'dotnet ef' migrations -->
-    <PackageReference Include="Microsoft.EntityFrameworkCore.Design" Version="8.0.10">
-      <PrivateAssets>all</PrivateAssets>
-      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
-    </PackageReference>
-    <!-- Charting library used for the pie chart -->
+    <!-- Charts -->
     <PackageReference Include="LiveChartsCore.SkiaSharpView.WPF" Version="2.0.0-rc4.5" />
+    <!-- PDF report (Community license: free for individuals) -->
+    <PackageReference Include="QuestPDF" Version="2026.9.1" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Resource Include="Assets\budgeter.ico" />
   </ItemGroup>
 
 </Project>

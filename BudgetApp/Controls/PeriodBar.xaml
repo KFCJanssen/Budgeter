@@ -1,0 +1,17 @@
+<UserControl x:Class="BudgetApp.Controls.PeriodBar"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+    <!-- Month selector shared by the Dashboard, Transactions and Budgets pages. -->
+    <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
+        <Button x:Name="PrevButton" Content="&#xE76B;" FontFamily="{StaticResource IconFont}" Style="{StaticResource QuietButton}"
+                Width="36" Height="36" Padding="0" ToolTip="Previous month" Click="Prev_Click"/>
+        <TextBlock x:Name="LabelText" FontSize="16" FontWeight="SemiBold" Foreground="{StaticResource TextBrush}"
+                   Width="160" TextAlignment="Center" VerticalAlignment="Center"/>
+        <Button x:Name="NextButton" Content="&#xE76C;" FontFamily="{StaticResource IconFont}" Style="{StaticResource QuietButton}"
+                Width="36" Height="36" Padding="0" ToolTip="Next month" Click="Next_Click"/>
+        <Button x:Name="ThisMonthButton" Content="This month" Style="{StaticResource QuietButton}" Height="36"
+                Margin="10,0,0,0" Click="ThisMonth_Click"/>
+        <Button x:Name="AllTimeButton" Content="All time" Style="{StaticResource QuietButton}" Height="36"
+                Margin="6,0,0,0" Click="AllTime_Click"/>
+    </StackPanel>
+</UserControl>

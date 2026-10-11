@@ -1,0 +1,209 @@
+<UserControl x:Class="BudgetApp.Pages.DashboardPage"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:lvc="clr-namespace:LiveChartsCore.SkiaSharpView.WPF;assembly=LiveChartsCore.SkiaSharpView.WPF"
+             xmlns:c="clr-namespace:BudgetApp.Controls">
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="*"/>
+        </Grid.RowDefinitions>
+
+        <!-- Header -->
+        <Grid Margin="0,0,0,18">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="*"/>
+                <ColumnDefinition Width="Auto"/>
+                <ColumnDefinition Width="Auto"/>
+            </Grid.ColumnDefinitions>
+            <StackPanel>
+                <TextBlock x:Name="TitleText" Text="Dashboard" Style="{StaticResource PageTitle}"/>
+                <TextBlock Text="Your month at a glance." Style="{StaticResource PageSubtitle}"/>
+            </StackPanel>
+            <c:PeriodBar Grid.Column="1" x:Name="PeriodBar" Margin="0,0,12,0"/>
+            <Button Grid.Column="2" Content="Export to CSV" Style="{StaticResource QuietButton}" Height="36" Click="Export_Click"/>
+        </Grid>
+
+        <!-- Stat cards -->
+        <Grid Grid.Row="1">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="*"/>
+                <ColumnDefinition Width="*"/>
+                <ColumnDefinition Width="*"/>
+            </Grid.ColumnDefinitions>
+            <Border Style="{StaticResource CardStyle}" Margin="0,0,8,16">
+                <StackPanel>
+                    <TextBlock Text="INCOME" Style="{StaticResource StatLabel}"/>
+                    <TextBlock x:Name="IncomeText" Style="{StaticResource StatValue}" Foreground="{StaticResource GoodBrush}"/>
+                    <TextBlock x:Name="IncomeSub" Style="{StaticResource StatSub}"/>
+                </StackPanel>
+            </Border>
+            <Border Grid.Column="1" Style="{StaticResource CardStyle}" Margin="8,0,8,16">
+                <StackPanel>
+                    <TextBlock Text="EXPENSES" Style="{StaticResource StatLabel}"/>
+                    <TextBlock x:Name="ExpensesText" Style="{StaticResource StatValue}" Foreground="#FF6B6B"/>
+                    <TextBlock x:Name="ExpensesSub" Style="{StaticResource StatSub}"/>
+                </StackPanel>
+            </Border>
+            <Border Grid.Column="2" Style="{StaticResource CardStyle}" Margin="8,0,0,16">
+                <StackPanel>
+                    <TextBlock Text="NET BALANCE" Style="{StaticResource StatLabel}"/>
+                    <TextBlock x:Name="NetText" Style="{StaticResource StatValue}"/>
+                    <TextBlock x:Name="NetSub" Style="{StaticResource StatSub}"/>
+                </StackPanel>
+            </Border>
+        </Grid>
+
+        <Grid Grid.Row="2">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="330"/>
+                <ColumnDefinition Width="*"/>
+                <ColumnDefinition Width="*"/>
+            </Grid.ColumnDefinitions>
+
+            <!-- Left: quick add + things that need attention -->
+            <ScrollViewer VerticalScrollBarVisibility="Auto" Margin="0,0,16,0">
+                <StackPanel>
+                    <Border Style="{StaticResource CardStyle}">
+                        <StackPanel x:Name="QuickAddForm" KeyDown="QuickAdd_KeyDown">
+                            <TextBlock Text="Quick add" Style="{StaticResource SectionHeader}"/>
+                            <StackPanel Orientation="Horizontal" Margin="0,0,0,12">
+                                <RadioButton x:Name="QuickOut" Content="Expense" GroupName="QuickType" Style="{StaticResource SegmentButton}" IsChecked="True"/>
+                                <RadioButton x:Name="QuickIn" Content="Income" GroupName="QuickType" Style="{StaticResource SegmentButton}"/>
+                            </StackPanel>
+                            <Grid>
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="*"/>
+                                    <ColumnDefinition Width="12"/>
+                                    <ColumnDefinition Width="*"/>
+                                </Grid.ColumnDefinitions>
+                                <StackPanel>
+                                    <TextBlock Text="Amount (€)" Style="{StaticResource InputLabel}"/>
+                                    <TextBox x:Name="QuickAmount" ToolTip="12,50 and 12.50 both work"/>
+                                </StackPanel>
+                                <StackPanel Grid.Column="2">
+                                    <TextBlock Text="Date" Style="{StaticResource InputLabel}"/>
+                                    <DatePicker x:Name="QuickDate"/>
+                                </StackPanel>
+                            </Grid>
+                            <TextBlock Text="Category" Style="{StaticResource InputLabel}"/>
+                            <ComboBox x:Name="QuickCategory" IsEditable="True"/>
+                            <TextBlock Text="Description (optional)" Style="{StaticResource InputLabel}"/>
+                            <TextBox x:Name="QuickDescription"/>
+                            <Button Content="Add" Style="{StaticResource PrimaryButton}" Click="QuickAdd_Click" Margin="0,2,0,0"/>
+                        </StackPanel>
+                    </Border>
+
+                    <Border Style="{StaticResource CardStyle}">
+                        <StackPanel>
+                            <TextBlock Text="To do" Style="{StaticResource SectionHeader}"/>
+                            <ItemsControl x:Name="AttentionList">
+                                <ItemsControl.ItemTemplate>
+                                    <DataTemplate>
+                                        <Border Style="{StaticResource SoftPanel}" Margin="0,0,0,8">
+                                            <StackPanel>
+                                                <TextBlock Text="{Binding Text}" Style="{StaticResource BodyText}"/>
+                                                <Button Content="{Binding ActionText}" Style="{StaticResource LinkButton}" Margin="0,4,0,0"
+                                                        Tag="{Binding}" Click="Attention_Click"/>
+                                            </StackPanel>
+                                        </Border>
+                                    </DataTemplate>
+                                </ItemsControl.ItemTemplate>
+                            </ItemsControl>
+                            <TextBlock x:Name="AllGoodText" Text="Nothing to do - all caught up." Style="{StaticResource HintText}"/>
+                        </StackPanel>
+                    </Border>
+                </StackPanel>
+            </ScrollViewer>
+
+            <!-- Middle: pie chart + budgets -->
+            <Grid Grid.Column="1" Margin="0,0,16,0">
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="330"/>
+                    <RowDefinition Height="*"/>
+                </Grid.RowDefinitions>
+                <Border Style="{StaticResource CardStyle}">
+                    <DockPanel>
+                        <TextBlock DockPanel.Dock="Top" x:Name="ChartHeader" Text="Where the income goes" Style="{StaticResource SectionHeader}" Margin="0,0,0,2"/>
+                        <TextBlock DockPanel.Dock="Top" x:Name="ChartSubHeader" Text=" " Style="{StaticResource HintText}" Margin="0,0,0,6"/>
+                        <Grid>
+                            <lvc:PieChart x:Name="Pie" LegendPosition="Right"/>
+                            <TextBlock x:Name="ChartEmpty" Text="Add income and expenses for this period to see the breakdown."
+                                       Style="{StaticResource HintText}" HorizontalAlignment="Center" VerticalAlignment="Center"
+                                       TextAlignment="Center" MaxWidth="240" Visibility="Collapsed"/>
+                        </Grid>
+                    </DockPanel>
+                </Border>
+                <Border Grid.Row="1" Style="{StaticResource CardStyle}" Margin="0">
+                    <DockPanel>
+                        <Grid DockPanel.Dock="Top">
+                            <TextBlock x:Name="BudgetsHeader" Text="Budgets this month" Style="{StaticResource SectionHeader}"/>
+                            <Button Content="Manage" Style="{StaticResource LinkButton}" HorizontalAlignment="Right" VerticalAlignment="Top"
+                                    Click="ManageBudgets_Click"/>
+                        </Grid>
+                        <Grid>
+                            <ScrollViewer VerticalScrollBarVisibility="Auto">
+                                <ItemsControl x:Name="BudgetList">
+                                    <ItemsControl.ItemTemplate>
+                                        <DataTemplate>
+                                            <StackPanel Margin="0,0,0,12">
+                                                <Grid>
+                                                    <TextBlock Text="{Binding Category}" FontWeight="SemiBold" Foreground="{StaticResource TextBrush}"/>
+                                                    <TextBlock Text="{Binding AmountText}" HorizontalAlignment="Right" Foreground="{StaticResource MutedBrush}"/>
+                                                </Grid>
+                                                <ProgressBar Style="{StaticResource SlimProgress}" Value="{Binding Bar, Mode=OneWay}" Foreground="{Binding Brush}" Margin="0,5,0,0"/>
+                                            </StackPanel>
+                                        </DataTemplate>
+                                    </ItemsControl.ItemTemplate>
+                                </ItemsControl>
+                            </ScrollViewer>
+                            <TextBlock x:Name="NoBudgetsText" Style="{StaticResource HintText}" VerticalAlignment="Center" TextAlignment="Center"
+                                       Text="No budgets yet. Set a monthly limit per category on the Budgets &amp; goals page."/>
+                        </Grid>
+                    </DockPanel>
+                </Border>
+            </Grid>
+
+            <!-- Right: recent transactions -->
+            <Border Grid.Column="2" Style="{StaticResource CardStyle}" Margin="0">
+                <DockPanel>
+                    <Grid DockPanel.Dock="Top">
+                        <TextBlock Text="Latest entries" Style="{StaticResource SectionHeader}"/>
+                        <Button Content="All transactions" Style="{StaticResource LinkButton}" HorizontalAlignment="Right" VerticalAlignment="Top"
+                                Click="AllTransactions_Click"/>
+                    </Grid>
+                    <Grid>
+                        <DataGrid x:Name="RecentGrid" HeadersVisibility="None" GridLinesVisibility="Horizontal" RowHeight="40"
+                                  MouseDoubleClick="RecentGrid_MouseDoubleClick">
+                            <DataGrid.Columns>
+                                <DataGridTemplateColumn Width="*">
+                                    <DataGridTemplateColumn.CellTemplate>
+                                        <DataTemplate>
+                                            <StackPanel VerticalAlignment="Center">
+                                                <TextBlock Text="{Binding Title}" FontWeight="SemiBold" TextTrimming="CharacterEllipsis"/>
+                                                <TextBlock Text="{Binding Subtitle}" FontSize="11" Foreground="{StaticResource FaintBrush}" TextTrimming="CharacterEllipsis"/>
+                                            </StackPanel>
+                                        </DataTemplate>
+                                    </DataGridTemplateColumn.CellTemplate>
+                                </DataGridTemplateColumn>
+                                <DataGridTextColumn Binding="{Binding AmountText}" Width="Auto">
+                                    <DataGridTextColumn.ElementStyle>
+                                        <Style TargetType="TextBlock">
+                                            <Setter Property="FontWeight" Value="SemiBold"/>
+                                            <Setter Property="Foreground" Value="{Binding Brush}"/>
+                                            <Setter Property="HorizontalAlignment" Value="Right"/>
+                                        </Style>
+                                    </DataGridTextColumn.ElementStyle>
+                                </DataGridTextColumn>
+                            </DataGrid.Columns>
+                        </DataGrid>
+                        <TextBlock x:Name="RecentEmpty" Style="{StaticResource HintText}" HorizontalAlignment="Center" VerticalAlignment="Center"
+                                   TextAlignment="Center" MaxWidth="260"
+                                   Text="No entries in this period yet. Use Quick add, or import a file from your bank."/>
+                    </Grid>
+                </DockPanel>
+            </Border>
+        </Grid>
+    </Grid>
+</UserControl>
