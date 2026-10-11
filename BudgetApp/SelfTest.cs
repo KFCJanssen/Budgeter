@@ -460,6 +460,19 @@ namespace BudgetApp
             AppState.Period = BudgetPeriod.ForMonth(DateTime.Today.AddMonths(-2));
 
             await Shot("01-dashboard", PageKey.Dashboard);
+            {
+                var dash = (DashboardPage)window.GetPage(PageKey.Dashboard);
+                var dp = (LiveChartsCore.SkiaSharpView.WPF.PieChart)dash.FindName("Pie");
+                await Idle(1000);
+                Line($"      dashboard pie now: {dp.ActualWidth}x{dp.ActualHeight}, loaded {dp.IsLoaded}, visible {dp.IsVisible}, series {dp.Series?.Count()}");
+                SaveVisual(dp, Math.Max(1, (int)dp.ActualWidth), Math.Max(1, (int)dp.ActualHeight), Brushes.White, Path.Combine(_out, "screens", "diag-j-dashboard-pie-alone.png"));
+                dp.Series = dp.Series.ToArray();
+                await Idle(800);
+                SaveVisual(dp, Math.Max(1, (int)dp.ActualWidth), Math.Max(1, (int)dp.ActualHeight), Brushes.White, Path.Combine(_out, "screens", "diag-k-dashboard-pie-reassigned.png"));
+                try { dp.CoreChart.Update(new LiveChartsCore.Kernel.ChartUpdateParams { IsAutomaticUpdate = false, Throttling = false }); } catch (Exception ex) { Line("      update failed: " + ex.Message); }
+                await Idle(800);
+                SaveVisual(dp, Math.Max(1, (int)dp.ActualWidth), Math.Max(1, (int)dp.ActualHeight), Brushes.White, Path.Combine(_out, "screens", "diag-l-dashboard-pie-updated.png"));
+            }
             await Shot("02-transactions", PageKey.Transactions);
             var someTx = store.Transactions.Where(t => t.Payee != null && t.Date.Month == DateTime.Today.AddMonths(-2).Month).OrderByDescending(t => t.Date).First();
             await Shot("03-transactions-edit", PageKey.Transactions, someTx);
