@@ -71,6 +71,7 @@ Bump the number in `VERSION` (and the changelog below) and push to `main`. GitHu
 
 ## Changelog
 
+- **2.0.1** — Smaller download: BudgetApp.exe is now about 85 MB instead of 190 MB (compressed), so updates are quicker
 - **2.0** — Big update: import bank files (ING, Rabobank, ABN AMRO, any CSV) with automatic categories, transfer and duplicate detection and undo; new sidebar layout with Transactions, Programmed, Budgets & goals, Trends, Calculators, Profile & report, Help and Settings pages; programmed income; budgets and savings goals; 10 financial calculators; financial profile with health check and PDF report; step-by-step guides; automatic backups and restore; in-app updates; safe upgrade of existing data
 - **1.1** — Fixes: amounts like 12.50 were saved as 1250 on Dutch Windows; tables showed $ instead of €; totals mixed all-time income with one month of programmed expenses. New: month-by-month view, edit entries, pause programmed expenses, start dates, delete confirmations, Enter to submit, CSV that opens correctly in Dutch Excel
 - **1.0** — First release: dashboard, income/expense entries, recurring expenses, pie chart, CSV export

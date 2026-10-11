@@ -12,8 +12,8 @@
     <!-- The version comes from the VERSION file in the repo root, so the app knows which release it is. -->
     <BudgeterVersion>$([System.IO.File]::ReadAllText('$(MSBuildThisFileDirectory)..\VERSION').Trim())</BudgeterVersion>
     <Version>$(BudgeterVersion)</Version>
-    <AssemblyVersion>$(BudgeterVersion).0.0</AssemblyVersion>
-    <FileVersion>$(BudgeterVersion).0.0</FileVersion>
+    <AssemblyVersion>$(BudgeterVersion)</AssemblyVersion>
+    <FileVersion>$(BudgeterVersion)</FileVersion>
     <!-- Lets build servers (GitHub Actions) compile this on any OS. -->
     <EnableWindowsTargeting>true</EnableWindowsTargeting>
   </PropertyGroup>
