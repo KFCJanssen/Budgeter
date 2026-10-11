@@ -212,13 +212,13 @@ namespace BudgetApp.Pages
                 {
                     Name = balanceName, Values = years.Select(y => y.Balance).ToArray(), GeometrySize = 0,
                     Stroke = new SolidColorPaint(Look.NetColor) { StrokeThickness = 3 }, Fill = new SolidColorPaint(Look.NetColor.WithAlpha(35)),
-                    ToolTipLabelFormatter = p => Money.Format((decimal)p.Coordinate.PrimaryValue)
+                    YToolTipLabelFormatter = p => Money.Format((decimal)p.Coordinate.PrimaryValue)
                 },
                 new LineSeries<decimal>
                 {
                     Name = depositName, Values = years.Select(y => y.Deposited).ToArray(), GeometrySize = 0,
                     Stroke = new SolidColorPaint(Look.AxisText) { StrokeThickness = 2 }, Fill = null,
-                    ToolTipLabelFormatter = p => Money.Format((decimal)p.Coordinate.PrimaryValue)
+                    YToolTipLabelFormatter = p => Money.Format((decimal)p.Coordinate.PrimaryValue)
                 }
             };
             chart.XAxes = new[] { new Axis { Labels = years.Select(y => $"Year {y.Year}").ToArray(), LabelsPaint = new SolidColorPaint(Look.AxisText), TextSize = 11 } };

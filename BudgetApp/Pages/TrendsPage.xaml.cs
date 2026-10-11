@@ -94,20 +94,20 @@ namespace BudgetApp.Pages
                 {
                     Name = "Income", Values = _months.Select(m => m.Income).ToArray(),
                     Fill = new SolidColorPaint(Look.IncomeColor), MaxBarWidth = 22,
-                    ToolTipLabelFormatter = p => Money.Format((decimal)p.Coordinate.PrimaryValue)
+                    YToolTipLabelFormatter = p => Money.Format((decimal)p.Coordinate.PrimaryValue)
                 },
                 new ColumnSeries<decimal>
                 {
                     Name = "Spending", Values = _months.Select(m => m.Expenses).ToArray(),
                     Fill = new SolidColorPaint(Look.ExpenseColor), MaxBarWidth = 22,
-                    ToolTipLabelFormatter = p => Money.Format((decimal)p.Coordinate.PrimaryValue)
+                    YToolTipLabelFormatter = p => Money.Format((decimal)p.Coordinate.PrimaryValue)
                 },
                 new LineSeries<decimal>
                 {
                     Name = "Left over", Values = _months.Select(m => m.Net).ToArray(),
                     Stroke = new SolidColorPaint(Look.NetColor) { StrokeThickness = 3 }, Fill = null, GeometrySize = 8,
                     GeometryStroke = new SolidColorPaint(Look.NetColor) { StrokeThickness = 3 },
-                    ToolTipLabelFormatter = p => Money.Format((decimal)p.Coordinate.PrimaryValue)
+                    YToolTipLabelFormatter = p => Money.Format((decimal)p.Coordinate.PrimaryValue)
                 }
             };
             MonthChart.XAxes = new[] { MonthAxis() };
@@ -151,7 +151,7 @@ namespace BudgetApp.Pages
                     Stroke = new SolidColorPaint(Look.ChartColors[1]) { StrokeThickness = 3 },
                     Fill = new SolidColorPaint(Look.ChartColors[1].WithAlpha(40)),
                     GeometrySize = 7, GeometryStroke = new SolidColorPaint(Look.ChartColors[1]) { StrokeThickness = 3 },
-                    ToolTipLabelFormatter = p => Money.Format((decimal)p.Coordinate.PrimaryValue)
+                    YToolTipLabelFormatter = p => Money.Format((decimal)p.Coordinate.PrimaryValue)
                 }
             };
             if (budget != null)
