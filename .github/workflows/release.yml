@@ -1,0 +1,54 @@
+name: Build & Release
+
+# Runs whenever main changes. If VERSION holds a version that has no release yet,
+# it builds a self-contained BudgetApp.exe on Windows and publishes a GitHub Release with it attached.
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  release:
+    runs-on: windows-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Read version
+        id: ver
+        shell: bash
+        run: |
+          VER="v$(tr -d ' \r\n' < VERSION)"
+          echo "tag=$VER" >> "$GITHUB_OUTPUT"
+          if gh release view "$VER" >/dev/null 2>&1; then
+            echo "exists=true" >> "$GITHUB_OUTPUT"
+            echo "Release $VER already exists - nothing to do."
+          else
+            echo "exists=false" >> "$GITHUB_OUTPUT"
+          fi
+        env:
+          GH_TOKEN: ${{ github.token }}
+
+      - uses: actions/setup-dotnet@v4
+        if: steps.ver.outputs.exists == 'false'
+        with:
+          dotnet-version: "8.0.x"
+
+      - name: Build BudgetApp.exe
+        if: steps.ver.outputs.exists == 'false'
+        shell: bash
+        run: |
+          dotnet publish BudgetApp/BudgetApp.csproj -c Release -r win-x64 --self-contained true \
+            -p:PublishSingleFile=true -p:IncludeNativeLibrariesForSelfExtract=true -o publish
+
+      - name: Publish release
+        if: steps.ver.outputs.exists == 'false'
+        shell: bash
+        run: |
+          TAG="${{ steps.ver.outputs.tag }}"
+          NOTES=$(awk -v v="${TAG#v}" '$0 ~ "^- \\*\\*" v "\\*\\*" {sub(/^- \*\*[^*]+\*\* — /, ""); print}' README.md)
+          gh release create "$TAG" publish/BudgetApp.exe --title "Budgeter $TAG" --notes "${NOTES:-Budgeter $TAG}" --target "$GITHUB_SHA"
+        env:
+          GH_TOKEN: ${{ github.token }}

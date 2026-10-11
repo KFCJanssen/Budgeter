@@ -30,3 +30,11 @@ Or open `BudgetApp/BudgetApp.csproj` in Visual Studio and press F5.
 ## Build the .exe yourself
 
 Double-click `build_exe.bat`. The self-contained single-file app lands in `publish\BudgetApp.exe`.
+
+## Changelog
+
+- **1.0** — First release: dashboard, income/expense entries, recurring expenses, pie chart, CSV export
+
+## Releasing a new version
+
+Bump the number in `VERSION` (and the changelog above) and push to `main`. GitHub Actions builds `BudgetApp.exe` and publishes the release automatically.
