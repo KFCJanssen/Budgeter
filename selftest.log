@@ -1,0 +1,87 @@
+
+== Upgrade a Budgeter 1.0 database
+ok    daily backup made before opening
+ok    only one automatic backup per day
+ok    backup made before upgrading
+ok    old transactions kept (2)
+ok    old amounts and types intact
+ok    old programmed costs became 'Expense'
+ok    data version is now 2
+ok    new columns added
+ok    new tables added
+ok    second upgrade is a no-op
+ok    database from a newer version is refused
+ok    fresh database works
+ok    screenshot 00-dashboard-after-upgrade
+   (2759 ms)
+
+== Fill in demo data
+ok    265 transactions seeded
+ok    last month: income 1380, spending 1231.10
+   (1162 ms)
+
+== Import bank files
+ok    screenshot 07-import-step1
+ok    unknown bank goes to the column check
+ok    screenshot 08-import-columns
+ok    Ing: recognised, straight to review
+ok    Ing: 6 rows read
+ok    ING: Netflix linked to the programmed item
+ok    ING: savings transfer recognised
+ok    screenshot 09-import-review
+ok    Rabobank: recognised, straight to review
+ok    Rabobank: 3 rows read
+ok    AbnAmro: recognised, straight to review
+ok    AbnAmro: 4 rows read
+ok    rule learned from a changed category
+ok    all sample rows imported (13)
+ok    re-import: everything already imported
+ok    undo removes exactly that import
+ok    import button saves and shows the done step
+ok    screenshot 10-import-done
+   (2961 ms)
+
+== PDF report
+ok    snapshot over 6 months
+ok    9 health-check items
+      [Action] Expensive debt
+      [Attention] You keep 0% of your income
+      [Attention] Your buffer covers 2.5 months
+      [Attention] Fixed needs take a large share
+      [Attention] Budgets that keep running over
+      [Attention] Spending is up 47%
+      [Attention] "New laptop" needs more per month
+      [Info] Student debt
+      [Good] Debt payments take 3% of income
+ok    PDF created (98 KB)
+ok    3 PDF pages
+   (505 ms)
+
+== Screenshots of every page
+ok    screenshot 01-dashboard
+ok    screenshot 02-transactions
+ok    screenshot 03-transactions-edit
+ok    screenshot 04-programmed
+ok    screenshot 05-budgets
+ok    screenshot 06-trends
+ok    screenshot 11-tools-01-savings-goal
+ok    screenshot 11-tools-02-compound
+ok    screenshot 11-tools-03-loan
+ok    screenshot 11-tools-04-debt
+ok    screenshot 11-tools-05-emergency
+ok    screenshot 11-tools-06-student
+ok    screenshot 11-tools-07-split
+ok    screenshot 11-tools-08-inflation
+ok    screenshot 11-tools-09-fi
+ok    screenshot 11-tools-10-car
+ok    screenshot 12-profile
+ok    screenshot 13-help-shortcut
+ok    screenshot 14-help-ing
+ok    screenshot 15-settings
+ok    screenshot 16-transactions-uncategorized
+ok    screenshot 17-toast
+ok    screenshot 18-dashboard-wide
+ok    screenshot 19-transactions-wide
+   (13971 ms)
+
+ALL PASSED
